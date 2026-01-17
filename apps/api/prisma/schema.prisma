@@ -1,0 +1,287 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// User (Landlord) Model
+// ============================================
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  firstName    String   @map("first_name")
+  lastName     String   @map("last_name")
+  phone        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  properties Property[]
+  tenants    Tenant[]
+  leases     Lease[]
+  payments   Payment[]
+  reminders  Reminder[]
+
+  @@map("users")
+}
+
+// ============================================
+// Property Model
+// ============================================
+model Property {
+  id              String         @id @default(cuid())
+  ownerId         String         @map("owner_id")
+  name            String
+  type            PropertyType
+  status          PropertyStatus @default(AVAILABLE)
+  street          String
+  unit            String?
+  city            String
+  state           String
+  zipCode         String         @map("zip_code")
+  country         String         @default("USA")
+  units           Int            @default(1)
+  bedrooms        Int?
+  bathrooms       Float?
+  squareFeet      Int?           @map("square_feet")
+  yearBuilt       Int?           @map("year_built")
+  description     String?
+  amenities       String[]       @default([])
+  monthlyRent     Float          @map("monthly_rent")
+  securityDeposit Float?         @map("security_deposit")
+  images          String[]       @default([])
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  leases   Lease[]
+  payments Payment[]
+
+  @@map("properties")
+}
+
+enum PropertyType {
+  SINGLE_FAMILY
+  MULTI_FAMILY
+  APARTMENT
+  CONDO
+  TOWNHOUSE
+  COMMERCIAL
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+  INACTIVE
+}
+
+// ============================================
+// Tenant Model
+// ============================================
+model Tenant {
+  id                    String       @id @default(cuid())
+  ownerId               String       @map("owner_id")
+  firstName             String       @map("first_name")
+  lastName              String       @map("last_name")
+  email                 String
+  phone                 String?
+  dateOfBirth           DateTime?    @map("date_of_birth")
+  ssnEncrypted          String?      @map("ssn_encrypted")
+  ssnLastFour           String?      @map("ssn_last_four")
+  status                TenantStatus @default(PENDING)
+  emergencyContactName  String?      @map("emergency_contact_name")
+  emergencyContactPhone String?      @map("emergency_contact_phone")
+  emergencyContactEmail String?      @map("emergency_contact_email")
+  emergencyRelationship String?      @map("emergency_relationship")
+  employer              String?
+  employerPosition      String?      @map("employer_position")
+  monthlyIncome         Float?       @map("monthly_income")
+  employerPhone         String?      @map("employer_phone")
+  employerAddress       String?      @map("employer_address")
+  notes                 String?
+  createdAt             DateTime     @default(now()) @map("created_at")
+  updatedAt             DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  leases   Lease[]
+  payments Payment[]
+
+  @@map("tenants")
+}
+
+enum TenantStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+  EVICTED
+}
+
+// ============================================
+// Lease Model
+// ============================================
+model Lease {
+  id                       String      @id @default(cuid())
+  propertyId               String      @map("property_id")
+  tenantId                 String      @map("tenant_id")
+  ownerId                  String      @map("owner_id")
+  type                     LeaseType
+  status                   LeaseStatus @default(DRAFT)
+  startDate                DateTime    @map("start_date")
+  endDate                  DateTime    @map("end_date")
+  monthlyRent              Float       @map("monthly_rent")
+  securityDeposit          Float       @map("security_deposit")
+  securityDepositPaid      Boolean     @default(false) @map("security_deposit_paid")
+  lateFeeAmount            Float?      @map("late_fee_amount")
+  lateFeeGracePeriodDays   Int?        @map("late_fee_grace_period_days")
+  paymentDueDay            Int         @default(1) @map("payment_due_day")
+  terms                    String?
+  createdAt                DateTime    @default(now()) @map("created_at")
+  updatedAt                DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  property  Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  tenant    Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  owner     User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  payments  Payment[]
+  documents LeaseDocument[]
+
+  @@map("leases")
+}
+
+enum LeaseType {
+  FIXED
+  MONTH_TO_MONTH
+}
+
+enum LeaseStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  RENEWED
+}
+
+// ============================================
+// Lease Document Model
+// ============================================
+model LeaseDocument {
+  id         String       @id @default(cuid())
+  leaseId    String       @map("lease_id")
+  name       String
+  url        String
+  type       DocumentType
+  uploadedAt DateTime     @default(now()) @map("uploaded_at")
+
+  // Relations
+  lease Lease @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+
+  @@map("lease_documents")
+}
+
+enum DocumentType {
+  LEASE_AGREEMENT
+  ADDENDUM
+  NOTICE
+  OTHER
+}
+
+// ============================================
+// Payment Model
+// ============================================
+model Payment {
+  id            String         @id @default(cuid())
+  leaseId       String         @map("lease_id")
+  tenantId      String         @map("tenant_id")
+  propertyId    String         @map("property_id")
+  ownerId       String         @map("owner_id")
+  type          PaymentType
+  status        PaymentStatus  @default(PENDING)
+  amount        Float
+  lateFee       Float?         @map("late_fee")
+  totalAmount   Float          @map("total_amount")
+  method        PaymentMethod?
+  dueDate       DateTime       @map("due_date")
+  paidDate      DateTime?      @map("paid_date")
+  periodStart   DateTime?      @map("period_start")
+  periodEnd     DateTime?      @map("period_end")
+  transactionId String?        @map("transaction_id")
+  notes         String?
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  lease    Lease    @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  owner    User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum PaymentType {
+  RENT
+  SECURITY_DEPOSIT
+  LATE_FEE
+  MAINTENANCE
+  UTILITY
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CHECK
+  BANK_TRANSFER
+  CREDIT_CARD
+  DEBIT_CARD
+  VENMO
+  ZELLE
+  OTHER
+}
+
+// ============================================
+// Reminder Model
+// ============================================
+model Reminder {
+  id                String        @id @default(cuid())
+  ownerId           String        @map("owner_id")
+  type              ReminderType
+  title             String
+  description       String?
+  dueDate           DateTime      @map("due_date")
+  relatedEntityId   String?       @map("related_entity_id")
+  relatedEntityType String?       @map("related_entity_type")
+  isCompleted       Boolean       @default(false) @map("is_completed")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("reminders")
+}
+
+enum ReminderType {
+  LEASE_EXPIRATION
+  RENT_DUE
+  PAYMENT_OVERDUE
+  MAINTENANCE
+  INSPECTION
+  INSURANCE_RENEWAL
+  CUSTOM
+}
