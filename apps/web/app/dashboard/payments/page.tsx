@@ -6,7 +6,13 @@ import { paymentsApi } from '@/lib/api';
 import { DataTable } from '@/components/ui/data-table';
 import { Badge, getStatusVariant } from '@/components/ui/badge';
 import { StatCard } from '@/components/ui/stat-card';
-import { DollarSign, Plus, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
+import {
+  DollarSign,
+  Plus,
+  Clock,
+  AlertTriangle,
+  CheckCircle,
+} from 'lucide-react';
 import { formatCurrency, formatDate } from '@repo/shared/utils';
 
 export default function PaymentsPage() {
@@ -17,10 +23,7 @@ export default function PaymentsPage() {
 
   useEffect(() => {
     if (token) {
-      Promise.all([
-        paymentsApi.getAll(token),
-        paymentsApi.getSummary(token),
-      ])
+      Promise.all([paymentsApi.getAll(token), paymentsApi.getSummary(token)])
         .then(([paymentsResponse, summaryData]) => {
           setPayments(paymentsResponse.data);
           setSummary(summaryData);
@@ -39,7 +42,9 @@ export default function PaymentsPage() {
           <p className="font-medium">
             {payment.tenant?.firstName} {payment.tenant?.lastName}
           </p>
-          <p className="text-sm text-muted-foreground">{payment.property?.name}</p>
+          <p className="text-sm text-muted-foreground">
+            {payment.property?.name}
+          </p>
         </div>
       ),
     },
@@ -47,22 +52,24 @@ export default function PaymentsPage() {
       key: 'type',
       header: 'Type',
       render: (payment: any) => (
-        <span className="capitalize">{payment.type.toLowerCase().replace('_', ' ')}</span>
+        <span className="capitalize">
+          {payment.type.toLowerCase().replace('_', ' ')}
+        </span>
       ),
     },
     {
       key: 'amount',
       header: 'Amount',
       render: (payment: any) => (
-        <span className="font-medium">{formatCurrency(payment.totalAmount)}</span>
+        <span className="font-medium">
+          {formatCurrency(payment.totalAmount)}
+        </span>
       ),
     },
     {
       key: 'dueDate',
       header: 'Due Date',
-      render: (payment: any) => (
-        <span>{formatDate(payment.dueDate)}</span>
-      ),
+      render: (payment: any) => <span>{formatDate(payment.dueDate)}</span>,
     },
     {
       key: 'paidDate',

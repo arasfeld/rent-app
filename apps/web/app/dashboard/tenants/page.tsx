@@ -31,7 +31,8 @@ export default function TenantsPage() {
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
             <span className="text-primary font-medium">
-              {tenant.firstName?.[0]}{tenant.lastName?.[0]}
+              {tenant.firstName?.[0]}
+              {tenant.lastName?.[0]}
             </span>
           </div>
           <div className="ml-4">
@@ -60,16 +61,16 @@ export default function TenantsPage() {
       key: 'status',
       header: 'Status',
       render: (tenant: any) => (
-        <Badge variant={getStatusVariant(tenant.status)}>
-          {tenant.status}
-        </Badge>
+        <Badge variant={getStatusVariant(tenant.status)}>{tenant.status}</Badge>
       ),
     },
     {
       key: 'property',
       header: 'Property',
       render: (tenant: any) => {
-        const activeLease = tenant.leases?.find((l: any) => l.status === 'ACTIVE');
+        const activeLease = tenant.leases?.find(
+          (l: any) => l.status === 'ACTIVE'
+        );
         if (activeLease?.property) {
           return (
             <div className="flex items-center">
@@ -85,9 +86,15 @@ export default function TenantsPage() {
       key: 'monthlyRent',
       header: 'Monthly Rent',
       render: (tenant: any) => {
-        const activeLease = tenant.leases?.find((l: any) => l.status === 'ACTIVE');
+        const activeLease = tenant.leases?.find(
+          (l: any) => l.status === 'ACTIVE'
+        );
         if (activeLease) {
-          return <span className="font-medium">{formatCurrency(activeLease.monthlyRent)}</span>;
+          return (
+            <span className="font-medium">
+              {formatCurrency(activeLease.monthlyRent)}
+            </span>
+          );
         }
         return <span className="text-muted-foreground">-</span>;
       },
@@ -96,7 +103,9 @@ export default function TenantsPage() {
       key: 'income',
       header: 'Monthly Income',
       render: (tenant: any) => (
-        <span>{tenant.monthlyIncome ? formatCurrency(tenant.monthlyIncome) : '-'}</span>
+        <span>
+          {tenant.monthlyIncome ? formatCurrency(tenant.monthlyIncome) : '-'}
+        </span>
       ),
     },
   ];

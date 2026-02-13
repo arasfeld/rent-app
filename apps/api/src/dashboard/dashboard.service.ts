@@ -8,7 +8,9 @@ export class DashboardService {
   async getStats(ownerId: string) {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const thirtyDaysFromNow = new Date(
+      now.getTime() + 30 * 24 * 60 * 60 * 1000
+    );
 
     const [
       totalProperties,
@@ -65,9 +67,10 @@ export class DashboardService {
       }),
     ]);
 
-    const occupancyRate = totalProperties > 0
-      ? Math.round((occupiedProperties / totalProperties) * 100)
-      : 0;
+    const occupancyRate =
+      totalProperties > 0
+        ? Math.round((occupiedProperties / totalProperties) * 100)
+        : 0;
 
     return {
       totalProperties,
@@ -81,40 +84,42 @@ export class DashboardService {
   }
 
   async getRecentActivity(ownerId: string, limit = 10) {
-    const [recentPayments, recentLeases, upcomingReminders] = await Promise.all([
-      // Recent payments
-      this.prisma.payment.findMany({
-        where: { ownerId },
-        orderBy: { updatedAt: 'desc' },
-        take: limit,
-        include: {
-          tenant: { select: { firstName: true, lastName: true } },
-          property: { select: { name: true } },
-        },
-      }),
+    const [recentPayments, recentLeases, upcomingReminders] = await Promise.all(
+      [
+        // Recent payments
+        this.prisma.payment.findMany({
+          where: { ownerId },
+          orderBy: { updatedAt: 'desc' },
+          take: limit,
+          include: {
+            tenant: { select: { firstName: true, lastName: true } },
+            property: { select: { name: true } },
+          },
+        }),
 
-      // Recent lease activity
-      this.prisma.lease.findMany({
-        where: { ownerId },
-        orderBy: { updatedAt: 'desc' },
-        take: limit,
-        include: {
-          tenant: { select: { firstName: true, lastName: true } },
-          property: { select: { name: true } },
-        },
-      }),
+        // Recent lease activity
+        this.prisma.lease.findMany({
+          where: { ownerId },
+          orderBy: { updatedAt: 'desc' },
+          take: limit,
+          include: {
+            tenant: { select: { firstName: true, lastName: true } },
+            property: { select: { name: true } },
+          },
+        }),
 
-      // Upcoming reminders
-      this.prisma.reminder.findMany({
-        where: {
-          ownerId,
-          isCompleted: false,
-          dueDate: { gte: new Date() },
-        },
-        orderBy: { dueDate: 'asc' },
-        take: limit,
-      }),
-    ]);
+        // Upcoming reminders
+        this.prisma.reminder.findMany({
+          where: {
+            ownerId,
+            isCompleted: false,
+            dueDate: { gte: new Date() },
+          },
+          orderBy: { dueDate: 'asc' },
+          take: limit,
+        }),
+      ]
+    );
 
     return {
       recentPayments,
@@ -153,17 +158,25 @@ export class DashboardService {
       }
     });
 
-    const monthlyRevenue = Object.entries(monthlyData).map(([month, amount]) => ({
-      month: parseInt(month),
-      amount,
-    }));
+    const monthlyRevenue = Object.entries(monthlyData).map(
+      ([month, amount]) => ({
+        month: parseInt(month),
+        amount,
+      })
+    );
 
     // Calculate totals
-    const yearToDateRevenue = payments.reduce((sum, p) => sum + p.totalAmount, 0);
+    const yearToDateRevenue = payments.reduce(
+      (sum, p) => sum + p.totalAmount,
+      0
+    );
     const currentMonthPayments = payments.filter(
       (p) => p.paidDate && p.paidDate.getMonth() === now.getMonth()
     );
-    const currentMonthRevenue = currentMonthPayments.reduce((sum, p) => sum + p.totalAmount, 0);
+    const currentMonthRevenue = currentMonthPayments.reduce(
+      (sum, p) => sum + p.totalAmount,
+      0
+    );
 
     return {
       yearToDateRevenue,

@@ -54,7 +54,9 @@ export default function LeasesPage() {
       key: 'type',
       header: 'Type',
       render: (lease: any) => (
-        <span className="capitalize">{lease.type.toLowerCase().replace('_', '-')}</span>
+        <span className="capitalize">
+          {lease.type.toLowerCase().replace('_', '-')}
+        </span>
       ),
     },
     {
@@ -81,7 +83,9 @@ export default function LeasesPage() {
         <div>
           <span>{formatCurrency(lease.securityDeposit)}</span>
           {lease.securityDepositPaid && (
-            <Badge variant="success" className="ml-2">Paid</Badge>
+            <Badge variant="success" className="ml-2">
+              Paid
+            </Badge>
           )}
         </div>
       ),
@@ -90,9 +94,7 @@ export default function LeasesPage() {
       key: 'status',
       header: 'Status',
       render: (lease: any) => (
-        <Badge variant={getStatusVariant(lease.status)}>
-          {lease.status}
-        </Badge>
+        <Badge variant={getStatusVariant(lease.status)}>{lease.status}</Badge>
       ),
     },
   ];
@@ -112,9 +114,7 @@ export default function LeasesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Leases</h1>
-          <p className="mt-1 text-muted-foreground">
-            Manage lease agreements
-          </p>
+          <p className="mt-1 text-muted-foreground">Manage lease agreements</p>
         </div>
         <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
           <Plus className="h-5 w-5 mr-2" />

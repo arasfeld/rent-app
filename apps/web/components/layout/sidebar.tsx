@@ -38,7 +38,11 @@ export function Sidebar() {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="p-2 rounded-md bg-background shadow-md border"
         >
-          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
         </button>
       </div>
 
@@ -61,13 +65,16 @@ export function Sidebar() {
           {/* Logo */}
           <div className="flex items-center h-16 px-6 border-b border-sidebar-border">
             <Building2 className="h-8 w-8 text-sidebar-primary" />
-            <span className="ml-2 text-xl font-bold text-sidebar-foreground">RentApp</span>
+            <span className="ml-2 text-xl font-bold text-sidebar-foreground">
+              RentApp
+            </span>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
             {navigation.map((item) => {
-              const isActive = pathname === item.href ||
+              const isActive =
+                pathname === item.href ||
                 (item.href !== '/dashboard' && pathname.startsWith(item.href));
 
               return (
@@ -82,7 +89,14 @@ export function Sidebar() {
                       : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                   )}
                 >
-                  <item.icon className={cn('h-5 w-5 mr-3', isActive ? 'text-sidebar-primary' : 'text-muted-foreground')} />
+                  <item.icon
+                    className={cn(
+                      'h-5 w-5 mr-3',
+                      isActive
+                        ? 'text-sidebar-primary'
+                        : 'text-muted-foreground'
+                    )}
+                  />
                   {item.name}
                 </Link>
               );
@@ -94,7 +108,8 @@ export function Sidebar() {
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 rounded-full bg-sidebar-accent flex items-center justify-center">
                 <span className="text-sidebar-accent-foreground font-medium">
-                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+                  {user?.firstName?.[0]}
+                  {user?.lastName?.[0]}
                 </span>
               </div>
               <div className="ml-3">

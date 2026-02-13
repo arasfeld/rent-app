@@ -46,7 +46,9 @@ export default function PropertiesPage() {
       key: 'type',
       header: 'Type',
       render: (property: any) => (
-        <span className="capitalize">{property.type.toLowerCase().replace('_', ' ')}</span>
+        <span className="capitalize">
+          {property.type.toLowerCase().replace('_', ' ')}
+        </span>
       ),
     },
     {
@@ -71,17 +73,23 @@ export default function PropertiesPage() {
       key: 'monthlyRent',
       header: 'Monthly Rent',
       render: (property: any) => (
-        <span className="font-medium">{formatCurrency(property.monthlyRent)}</span>
+        <span className="font-medium">
+          {formatCurrency(property.monthlyRent)}
+        </span>
       ),
     },
     {
       key: 'tenant',
       header: 'Current Tenant',
       render: (property: any) => {
-        const activeLease = property.leases?.find((l: any) => l.status === 'ACTIVE');
+        const activeLease = property.leases?.find(
+          (l: any) => l.status === 'ACTIVE'
+        );
         if (activeLease?.tenant) {
           return (
-            <span>{activeLease.tenant.firstName} {activeLease.tenant.lastName}</span>
+            <span>
+              {activeLease.tenant.firstName} {activeLease.tenant.lastName}
+            </span>
           );
         }
         return <span className="text-muted-foreground">Vacant</span>;

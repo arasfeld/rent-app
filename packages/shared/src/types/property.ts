@@ -1,5 +1,15 @@
-export type PropertyType = 'single_family' | 'multi_family' | 'apartment' | 'condo' | 'townhouse' | 'commercial';
-export type PropertyStatus = 'available' | 'occupied' | 'maintenance' | 'inactive';
+export type PropertyType =
+  | 'single_family'
+  | 'multi_family'
+  | 'apartment'
+  | 'condo'
+  | 'townhouse'
+  | 'commercial';
+export type PropertyStatus =
+  | 'available'
+  | 'occupied'
+  | 'maintenance'
+  | 'inactive';
 
 export interface Property {
   id: string;

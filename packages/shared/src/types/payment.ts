@@ -1,6 +1,25 @@
-export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded' | 'cancelled';
-export type PaymentType = 'rent' | 'security_deposit' | 'late_fee' | 'maintenance' | 'utility' | 'other';
-export type PaymentMethod = 'cash' | 'check' | 'bank_transfer' | 'credit_card' | 'debit_card' | 'venmo' | 'zelle' | 'other';
+export type PaymentStatus =
+  | 'pending'
+  | 'completed'
+  | 'failed'
+  | 'refunded'
+  | 'cancelled';
+export type PaymentType =
+  | 'rent'
+  | 'security_deposit'
+  | 'late_fee'
+  | 'maintenance'
+  | 'utility'
+  | 'other';
+export type PaymentMethod =
+  | 'cash'
+  | 'check'
+  | 'bank_transfer'
+  | 'credit_card'
+  | 'debit_card'
+  | 'venmo'
+  | 'zelle'
+  | 'other';
 
 export interface Payment {
   id: string;

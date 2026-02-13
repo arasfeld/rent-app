@@ -1,12 +1,33 @@
-import { IsString, IsEnum, IsOptional, IsNumber, IsDateString, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsNumber,
+  IsDateString,
+  Min,
+  Max,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreatePaymentDto {
   @IsString()
   leaseId: string;
 
-  @IsEnum(['RENT', 'SECURITY_DEPOSIT', 'LATE_FEE', 'MAINTENANCE', 'UTILITY', 'OTHER'])
-  type: 'RENT' | 'SECURITY_DEPOSIT' | 'LATE_FEE' | 'MAINTENANCE' | 'UTILITY' | 'OTHER';
+  @IsEnum([
+    'RENT',
+    'SECURITY_DEPOSIT',
+    'LATE_FEE',
+    'MAINTENANCE',
+    'UTILITY',
+    'OTHER',
+  ])
+  type:
+    | 'RENT'
+    | 'SECURITY_DEPOSIT'
+    | 'LATE_FEE'
+    | 'MAINTENANCE'
+    | 'UTILITY'
+    | 'OTHER';
 
   @IsNumber()
   @Min(0)
@@ -18,8 +39,25 @@ export class CreatePaymentDto {
   lateFee?: number;
 
   @IsOptional()
-  @IsEnum(['CASH', 'CHECK', 'BANK_TRANSFER', 'CREDIT_CARD', 'DEBIT_CARD', 'VENMO', 'ZELLE', 'OTHER'])
-  method?: 'CASH' | 'CHECK' | 'BANK_TRANSFER' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'VENMO' | 'ZELLE' | 'OTHER';
+  @IsEnum([
+    'CASH',
+    'CHECK',
+    'BANK_TRANSFER',
+    'CREDIT_CARD',
+    'DEBIT_CARD',
+    'VENMO',
+    'ZELLE',
+    'OTHER',
+  ])
+  method?:
+    | 'CASH'
+    | 'CHECK'
+    | 'BANK_TRANSFER'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'VENMO'
+    | 'ZELLE'
+    | 'OTHER';
 
   @IsDateString()
   dueDate: string;
@@ -49,8 +87,25 @@ export class RecordPaymentDto {
   @Min(0)
   amount: number;
 
-  @IsEnum(['CASH', 'CHECK', 'BANK_TRANSFER', 'CREDIT_CARD', 'DEBIT_CARD', 'VENMO', 'ZELLE', 'OTHER'])
-  method: 'CASH' | 'CHECK' | 'BANK_TRANSFER' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'VENMO' | 'ZELLE' | 'OTHER';
+  @IsEnum([
+    'CASH',
+    'CHECK',
+    'BANK_TRANSFER',
+    'CREDIT_CARD',
+    'DEBIT_CARD',
+    'VENMO',
+    'ZELLE',
+    'OTHER',
+  ])
+  method:
+    | 'CASH'
+    | 'CHECK'
+    | 'BANK_TRANSFER'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'VENMO'
+    | 'ZELLE'
+    | 'OTHER';
 
   @IsOptional()
   @IsDateString()
@@ -77,8 +132,25 @@ export class UpdatePaymentDto {
   lateFee?: number;
 
   @IsOptional()
-  @IsEnum(['CASH', 'CHECK', 'BANK_TRANSFER', 'CREDIT_CARD', 'DEBIT_CARD', 'VENMO', 'ZELLE', 'OTHER'])
-  method?: 'CASH' | 'CHECK' | 'BANK_TRANSFER' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'VENMO' | 'ZELLE' | 'OTHER';
+  @IsEnum([
+    'CASH',
+    'CHECK',
+    'BANK_TRANSFER',
+    'CREDIT_CARD',
+    'DEBIT_CARD',
+    'VENMO',
+    'ZELLE',
+    'OTHER',
+  ])
+  method?:
+    | 'CASH'
+    | 'CHECK'
+    | 'BANK_TRANSFER'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'VENMO'
+    | 'ZELLE'
+    | 'OTHER';
 
   @IsOptional()
   @IsDateString()
@@ -116,12 +188,42 @@ export class PaymentQueryDto {
   status?: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED' | 'CANCELLED';
 
   @IsOptional()
-  @IsEnum(['RENT', 'SECURITY_DEPOSIT', 'LATE_FEE', 'MAINTENANCE', 'UTILITY', 'OTHER'])
-  type?: 'RENT' | 'SECURITY_DEPOSIT' | 'LATE_FEE' | 'MAINTENANCE' | 'UTILITY' | 'OTHER';
+  @IsEnum([
+    'RENT',
+    'SECURITY_DEPOSIT',
+    'LATE_FEE',
+    'MAINTENANCE',
+    'UTILITY',
+    'OTHER',
+  ])
+  type?:
+    | 'RENT'
+    | 'SECURITY_DEPOSIT'
+    | 'LATE_FEE'
+    | 'MAINTENANCE'
+    | 'UTILITY'
+    | 'OTHER';
 
   @IsOptional()
-  @IsEnum(['CASH', 'CHECK', 'BANK_TRANSFER', 'CREDIT_CARD', 'DEBIT_CARD', 'VENMO', 'ZELLE', 'OTHER'])
-  method?: 'CASH' | 'CHECK' | 'BANK_TRANSFER' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'VENMO' | 'ZELLE' | 'OTHER';
+  @IsEnum([
+    'CASH',
+    'CHECK',
+    'BANK_TRANSFER',
+    'CREDIT_CARD',
+    'DEBIT_CARD',
+    'VENMO',
+    'ZELLE',
+    'OTHER',
+  ])
+  method?:
+    | 'CASH'
+    | 'CHECK'
+    | 'BANK_TRANSFER'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'VENMO'
+    | 'ZELLE'
+    | 'OTHER';
 
   @IsOptional()
   @IsString()

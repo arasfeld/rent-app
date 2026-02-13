@@ -1,4 +1,9 @@
-export type LeaseStatus = 'draft' | 'active' | 'expired' | 'terminated' | 'renewed';
+export type LeaseStatus =
+  | 'draft'
+  | 'active'
+  | 'expired'
+  | 'terminated'
+  | 'renewed';
 export type LeaseType = 'fixed' | 'month_to_month';
 
 export interface Lease {

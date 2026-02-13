@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreatePropertyDto, UpdatePropertyDto, PropertyQueryDto } from './dto/property.dto';
+import {
+  CreatePropertyDto,
+  UpdatePropertyDto,
+  PropertyQueryDto,
+} from './dto/property.dto';
 
 @Injectable()
 export class PropertiesService {
@@ -32,7 +36,15 @@ export class PropertiesService {
   }
 
   async findAll(ownerId: string, query: PropertyQueryDto) {
-    const { page = 1, limit = 10, status, type, city, minRent, maxRent } = query;
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      type,
+      city,
+      minRent,
+      maxRent,
+    } = query;
     const skip = (page - 1) * limit;
 
     const where: any = { ownerId };

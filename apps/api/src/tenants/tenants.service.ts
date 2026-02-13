@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateTenantDto, UpdateTenantDto, TenantQueryDto } from './dto/tenant.dto';
+import {
+  CreateTenantDto,
+  UpdateTenantDto,
+  TenantQueryDto,
+} from './dto/tenant.dto';
 
 @Injectable()
 export class TenantsService {

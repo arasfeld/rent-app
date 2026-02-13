@@ -34,7 +34,7 @@ export class AuthController {
   @Patch('profile')
   async updateProfile(
     @CurrentUser('id') userId: string,
-    @Body() dto: UpdateProfileDto,
+    @Body() dto: UpdateProfileDto
   ) {
     return this.authService.updateProfile(userId, dto);
   }

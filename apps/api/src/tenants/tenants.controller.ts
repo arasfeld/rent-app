@@ -1,6 +1,20 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { TenantsService } from './tenants.service';
-import { CreateTenantDto, UpdateTenantDto, TenantQueryDto } from './dto/tenant.dto';
+import {
+  CreateTenantDto,
+  UpdateTenantDto,
+  TenantQueryDto,
+} from './dto/tenant.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
@@ -28,7 +42,7 @@ export class TenantsController {
   update(
     @CurrentUser('id') userId: string,
     @Param('id') id: string,
-    @Body() dto: UpdateTenantDto,
+    @Body() dto: UpdateTenantDto
   ) {
     return this.tenantsService.update(userId, id, dto);
   }

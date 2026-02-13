@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { LeasesService } from './leases.service';
 import { CreateLeaseDto, UpdateLeaseDto, LeaseQueryDto } from './dto/lease.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -28,7 +38,7 @@ export class LeasesController {
   update(
     @CurrentUser('id') userId: string,
     @Param('id') id: string,
-    @Body() dto: UpdateLeaseDto,
+    @Body() dto: UpdateLeaseDto
   ) {
     return this.leasesService.update(userId, id, dto);
   }

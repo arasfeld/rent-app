@@ -70,9 +70,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">
-          Welcome back, {user?.firstName}!
-        </h1>
+        <h1 className="text-2xl font-bold">Welcome back, {user?.firstName}!</h1>
         <p className="mt-1 text-muted-foreground">
           Here's what's happening with your properties today.
         </p>
@@ -103,16 +101,15 @@ export default function DashboardPage() {
       </div>
 
       {/* Alerts */}
-      {((stats?.overduePayments || 0) > 0 || (stats?.upcomingLeaseExpirations || 0) > 0) && (
+      {((stats?.overduePayments || 0) > 0 ||
+        (stats?.upcomingLeaseExpirations || 0) > 0) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {(stats?.overduePayments || 0) > 0 && (
             <div className="rounded-xl border bg-card p-6 border-l-4 border-l-destructive">
               <div className="flex items-center">
                 <AlertTriangle className="h-8 w-8 text-destructive" />
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium">
-                    Overdue Payments
-                  </h3>
+                  <h3 className="text-lg font-medium">Overdue Payments</h3>
                   <p className="text-muted-foreground">
                     {stats?.overduePayments} payment(s) are past due
                   </p>
@@ -125,11 +122,10 @@ export default function DashboardPage() {
               <div className="flex items-center">
                 <Calendar className="h-8 w-8 text-[color:var(--warning)]" />
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium">
-                    Leases Expiring Soon
-                  </h3>
+                  <h3 className="text-lg font-medium">Leases Expiring Soon</h3>
                   <p className="text-muted-foreground">
-                    {stats?.upcomingLeaseExpirations} lease(s) expire in the next 30 days
+                    {stats?.upcomingLeaseExpirations} lease(s) expire in the
+                    next 30 days
                   </p>
                 </div>
               </div>
@@ -142,9 +138,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Payments */}
         <div className="rounded-xl border bg-card p-6 shadow">
-          <h2 className="text-lg font-semibold mb-4">
-            Recent Payments
-          </h2>
+          <h2 className="text-lg font-semibold mb-4">Recent Payments</h2>
           {activity?.recentPayments && activity.recentPayments.length > 0 ? (
             <div className="space-y-4">
               {activity.recentPayments.slice(0, 5).map((payment: any) => (
@@ -178,10 +172,9 @@ export default function DashboardPage() {
 
         {/* Upcoming Reminders */}
         <div className="rounded-xl border bg-card p-6 shadow">
-          <h2 className="text-lg font-semibold mb-4">
-            Upcoming Reminders
-          </h2>
-          {activity?.upcomingReminders && activity.upcomingReminders.length > 0 ? (
+          <h2 className="text-lg font-semibold mb-4">Upcoming Reminders</h2>
+          {activity?.upcomingReminders &&
+          activity.upcomingReminders.length > 0 ? (
             <div className="space-y-4">
               {activity.upcomingReminders.slice(0, 5).map((reminder: any) => (
                 <div
@@ -189,9 +182,7 @@ export default function DashboardPage() {
                   className="flex items-start py-2 border-b last:border-0"
                 >
                   <div className="flex-1">
-                    <p className="font-medium">
-                      {reminder.title}
-                    </p>
+                    <p className="font-medium">{reminder.title}</p>
                     <p className="text-sm text-muted-foreground">
                       {reminder.description}
                     </p>

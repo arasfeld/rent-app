@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
+import { cn } from '@/lib/utils';
+import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
@@ -23,7 +23,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-card text-card-foreground shadow p-6",
+        'rounded-xl border bg-card text-card-foreground shadow p-6',
         className
       )}
     >
@@ -45,10 +45,10 @@ export function StatCard({
           )}
           <span
             className={
-              isPositive ? "text-[color:var(--success)]" : "text-destructive"
+              isPositive ? 'text-[color:var(--success)]' : 'text-destructive'
             }
           >
-            {isPositive ? "+" : ""}
+            {isPositive ? '+' : ''}
             {change}%
           </span>
           {changeLabel && (

@@ -1,6 +1,20 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { PropertiesService } from './properties.service';
-import { CreatePropertyDto, UpdatePropertyDto, PropertyQueryDto } from './dto/property.dto';
+import {
+  CreatePropertyDto,
+  UpdatePropertyDto,
+  PropertyQueryDto,
+} from './dto/property.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
@@ -28,7 +42,7 @@ export class PropertiesController {
   update(
     @CurrentUser('id') userId: string,
     @Param('id') id: string,
-    @Body() dto: UpdatePropertyDto,
+    @Body() dto: UpdatePropertyDto
   ) {
     return this.propertiesService.update(userId, id, dto);
   }

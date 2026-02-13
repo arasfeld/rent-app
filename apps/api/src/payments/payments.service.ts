@@ -1,6 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreatePaymentDto, UpdatePaymentDto, PaymentQueryDto, RecordPaymentDto } from './dto/payment.dto';
+import {
+  CreatePaymentDto,
+  UpdatePaymentDto,
+  PaymentQueryDto,
+  RecordPaymentDto,
+} from './dto/payment.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -199,7 +208,8 @@ export class PaymentsService {
       throw new NotFoundException('Payment not found');
     }
 
-    const totalAmount = (dto.amount ?? payment.amount) + (dto.lateFee ?? payment.lateFee ?? 0);
+    const totalAmount =
+      (dto.amount ?? payment.amount) + (dto.lateFee ?? payment.lateFee ?? 0);
 
     return this.prisma.payment.update({
       where: { id },
@@ -207,7 +217,10 @@ export class PaymentsService {
         status: dto.status,
         amount: dto.amount,
         lateFee: dto.lateFee,
-        totalAmount: dto.amount !== undefined || dto.lateFee !== undefined ? totalAmount : undefined,
+        totalAmount:
+          dto.amount !== undefined || dto.lateFee !== undefined
+            ? totalAmount
+            : undefined,
         method: dto.method,
         dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
         paidDate: dto.paidDate ? new Date(dto.paidDate) : undefined,

@@ -34,9 +34,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Building2 className="mx-auto h-12 w-12 text-primary" />
-          <h2 className="mt-6 text-3xl font-bold">
-            Sign in to RentApp
-          </h2>
+          <h2 className="mt-6 text-3xl font-bold">Sign in to RentApp</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Manage your rental properties with ease
           </p>
@@ -78,7 +76,10 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -111,16 +112,23 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center text-sm">
-            <span className="text-muted-foreground">Don't have an account? </span>
-            <Link href="/register" className="font-medium text-primary hover:underline">
+            <span className="text-muted-foreground">
+              Don't have an account?{' '}
+            </span>
+            <Link
+              href="/register"
+              className="font-medium text-primary hover:underline"
+            >
               Sign up
             </Link>
           </div>
 
           <div className="mt-6 p-4 bg-muted rounded-lg">
             <p className="text-sm text-muted-foreground text-center">
-              <strong>Demo credentials:</strong><br />
-              Email: demo@rentapp.com<br />
+              <strong>Demo credentials:</strong>
+              <br />
+              Email: demo@rentapp.com
+              <br />
               Password: password123
             </p>
           </div>

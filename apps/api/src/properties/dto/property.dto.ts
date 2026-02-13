@@ -1,4 +1,13 @@
-import { IsString, IsEnum, IsOptional, IsNumber, IsArray, ValidateNested, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsNumber,
+  IsArray,
+  ValidateNested,
+  Min,
+  Max,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class AddressDto {
@@ -27,8 +36,21 @@ export class CreatePropertyDto {
   @IsString()
   name: string;
 
-  @IsEnum(['SINGLE_FAMILY', 'MULTI_FAMILY', 'APARTMENT', 'CONDO', 'TOWNHOUSE', 'COMMERCIAL'])
-  type: 'SINGLE_FAMILY' | 'MULTI_FAMILY' | 'APARTMENT' | 'CONDO' | 'TOWNHOUSE' | 'COMMERCIAL';
+  @IsEnum([
+    'SINGLE_FAMILY',
+    'MULTI_FAMILY',
+    'APARTMENT',
+    'CONDO',
+    'TOWNHOUSE',
+    'COMMERCIAL',
+  ])
+  type:
+    | 'SINGLE_FAMILY'
+    | 'MULTI_FAMILY'
+    | 'APARTMENT'
+    | 'CONDO'
+    | 'TOWNHOUSE'
+    | 'COMMERCIAL';
 
   @ValidateNested()
   @Type(() => AddressDto)
@@ -85,8 +107,21 @@ export class UpdatePropertyDto {
   name?: string;
 
   @IsOptional()
-  @IsEnum(['SINGLE_FAMILY', 'MULTI_FAMILY', 'APARTMENT', 'CONDO', 'TOWNHOUSE', 'COMMERCIAL'])
-  type?: 'SINGLE_FAMILY' | 'MULTI_FAMILY' | 'APARTMENT' | 'CONDO' | 'TOWNHOUSE' | 'COMMERCIAL';
+  @IsEnum([
+    'SINGLE_FAMILY',
+    'MULTI_FAMILY',
+    'APARTMENT',
+    'CONDO',
+    'TOWNHOUSE',
+    'COMMERCIAL',
+  ])
+  type?:
+    | 'SINGLE_FAMILY'
+    | 'MULTI_FAMILY'
+    | 'APARTMENT'
+    | 'CONDO'
+    | 'TOWNHOUSE'
+    | 'COMMERCIAL';
 
   @IsOptional()
   @IsEnum(['AVAILABLE', 'OCCUPIED', 'MAINTENANCE', 'INACTIVE'])
@@ -162,8 +197,21 @@ export class PropertyQueryDto {
   status?: 'AVAILABLE' | 'OCCUPIED' | 'MAINTENANCE' | 'INACTIVE';
 
   @IsOptional()
-  @IsEnum(['SINGLE_FAMILY', 'MULTI_FAMILY', 'APARTMENT', 'CONDO', 'TOWNHOUSE', 'COMMERCIAL'])
-  type?: 'SINGLE_FAMILY' | 'MULTI_FAMILY' | 'APARTMENT' | 'CONDO' | 'TOWNHOUSE' | 'COMMERCIAL';
+  @IsEnum([
+    'SINGLE_FAMILY',
+    'MULTI_FAMILY',
+    'APARTMENT',
+    'CONDO',
+    'TOWNHOUSE',
+    'COMMERCIAL',
+  ])
+  type?:
+    | 'SINGLE_FAMILY'
+    | 'MULTI_FAMILY'
+    | 'APARTMENT'
+    | 'CONDO'
+    | 'TOWNHOUSE'
+    | 'COMMERCIAL';
 
   @IsOptional()
   @IsString()

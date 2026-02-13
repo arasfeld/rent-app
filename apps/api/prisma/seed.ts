@@ -225,12 +225,15 @@ async function main() {
       propertyId: property3.id,
       ownerId: user.id,
       type: 'RENT' as const,
-      status: i === 0 ? 'PENDING' as const : 'COMPLETED' as const,
+      status: i === 0 ? ('PENDING' as const) : ('COMPLETED' as const),
       amount: 2800,
       totalAmount: 2800,
-      method: i === 0 ? null : 'ZELLE' as const,
+      method: i === 0 ? null : ('ZELLE' as const),
       dueDate: paymentDate,
-      paidDate: i === 0 ? null : new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1),
+      paidDate:
+        i === 0
+          ? null
+          : new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1),
       periodStart,
       periodEnd,
     });
@@ -247,7 +250,8 @@ async function main() {
         ownerId: user.id,
         type: 'LEASE_EXPIRATION',
         title: 'Lease expiring soon - Sunset Apartments 101',
-        description: 'Sarah Johnson\'s lease expires in 30 days. Consider sending renewal offer.',
+        description:
+          "Sarah Johnson's lease expires in 30 days. Consider sending renewal offer.",
         dueDate: new Date(now.getFullYear(), now.getMonth() + 1, 1),
         relatedEntityId: lease1.id,
         relatedEntityType: 'lease',
@@ -256,7 +260,7 @@ async function main() {
         ownerId: user.id,
         type: 'RENT_DUE',
         title: 'Rent due - Downtown Condo 5B',
-        description: 'David Chen\'s rent payment is due.',
+        description: "David Chen's rent payment is due.",
         dueDate: new Date(now.getFullYear(), now.getMonth(), 1),
         relatedEntityId: lease2.id,
         relatedEntityType: 'payment',

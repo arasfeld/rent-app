@@ -1,4 +1,15 @@
-import { IsString, IsEmail, IsOptional, IsNumber, IsEnum, ValidateNested, IsBoolean, IsDateString, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsNumber,
+  IsEnum,
+  ValidateNested,
+  IsBoolean,
+  IsDateString,
+  Min,
+  Max,
+} from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 
 export class EmergencyContactDto {

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
 interface Column<T> {
   key: string;
@@ -22,7 +22,7 @@ export function DataTable<T>({
   data,
   keyExtractor,
   onRowClick,
-  emptyMessage = "No data available",
+  emptyMessage = 'No data available',
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
@@ -53,15 +53,17 @@ export function DataTable<T>({
               key={keyExtractor(item)}
               onClick={() => onRowClick?.(item)}
               className={cn(
-                "transition-colors hover:bg-muted/50",
-                onRowClick && "cursor-pointer"
+                'transition-colors hover:bg-muted/50',
+                onRowClick && 'cursor-pointer'
               )}
             >
               {columns.map((column) => (
                 <td key={column.key} className="p-4 align-middle">
                   {column.render
                     ? column.render(item)
-                    : (item as Record<string, unknown>)[column.key] as ReactNode}
+                    : ((item as Record<string, unknown>)[
+                        column.key
+                      ] as ReactNode)}
                 </td>
               ))}
             </tr>

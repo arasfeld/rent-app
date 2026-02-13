@@ -57,16 +57,15 @@ export default function RegisterPage() {
     }
   };
 
-  const inputClass = "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+  const inputClass =
+    'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Building2 className="mx-auto h-12 w-12 text-primary" />
-          <h2 className="mt-6 text-3xl font-bold">
-            Create your account
-          </h2>
+          <h2 className="mt-6 text-3xl font-bold">Create your account</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Start managing your rental properties today
           </p>
@@ -87,7 +86,10 @@ export default function RegisterPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium mb-2">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium mb-2"
+                >
                   First name
                 </label>
                 <div className="relative">
@@ -108,7 +110,10 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium mb-2">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium mb-2"
+                >
                   Last name
                 </label>
                 <input
@@ -147,7 +152,10 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -168,7 +176,10 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium mb-2"
+              >
                 Confirm password
               </label>
               <div className="relative">
@@ -200,8 +211,13 @@ export default function RegisterPage() {
           </div>
 
           <div className="text-center text-sm">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link href="/login" className="font-medium text-primary hover:underline">
+            <span className="text-muted-foreground">
+              Already have an account?{' '}
+            </span>
+            <Link
+              href="/login"
+              className="font-medium text-primary hover:underline"
+            >
               Sign in
             </Link>
           </div>

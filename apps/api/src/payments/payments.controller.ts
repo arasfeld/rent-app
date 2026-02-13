@@ -1,6 +1,21 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { CreatePaymentDto, UpdatePaymentDto, PaymentQueryDto, RecordPaymentDto } from './dto/payment.dto';
+import {
+  CreatePaymentDto,
+  UpdatePaymentDto,
+  PaymentQueryDto,
+  RecordPaymentDto,
+} from './dto/payment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
@@ -15,7 +30,10 @@ export class PaymentsController {
   }
 
   @Post('record')
-  recordPayment(@CurrentUser('id') userId: string, @Body() dto: RecordPaymentDto) {
+  recordPayment(
+    @CurrentUser('id') userId: string,
+    @Body() dto: RecordPaymentDto
+  ) {
     return this.paymentsService.recordPayment(userId, dto);
   }
 
@@ -38,7 +56,7 @@ export class PaymentsController {
   update(
     @CurrentUser('id') userId: string,
     @Param('id') id: string,
-    @Body() dto: UpdatePaymentDto,
+    @Body() dto: UpdatePaymentDto
   ) {
     return this.paymentsService.update(userId, id, dto);
   }

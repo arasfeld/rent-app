@@ -1,7 +1,10 @@
 /**
  * Format a date to a human-readable string
  */
-export function formatDate(date: Date | string, format: 'short' | 'long' | 'iso' = 'short'): string {
+export function formatDate(
+  date: Date | string,
+  format: 'short' | 'long' | 'iso' = 'short'
+): string {
   const d = typeof date === 'string' ? new Date(date) : date;
 
   switch (format) {
@@ -28,7 +31,10 @@ export function formatDate(date: Date | string, format: 'short' | 'long' | 'iso'
 /**
  * Get the number of days between two dates
  */
-export function daysBetween(date1: Date | string, date2: Date | string): number {
+export function daysBetween(
+  date1: Date | string,
+  date2: Date | string
+): number {
   const d1 = typeof date1 === 'string' ? new Date(date1) : date1;
   const d2 = typeof date2 === 'string' ? new Date(date2) : date2;
   const diffTime = Math.abs(d2.getTime() - d1.getTime());
@@ -79,10 +85,15 @@ export function addMonths(date: Date, months: number): Date {
 /**
  * Calculate lease duration in months
  */
-export function getLeaseDurationMonths(startDate: Date | string, endDate: Date | string): number {
+export function getLeaseDurationMonths(
+  startDate: Date | string,
+  endDate: Date | string
+): number {
   const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
   const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
 
-  const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+  const months =
+    (end.getFullYear() - start.getFullYear()) * 12 +
+    (end.getMonth() - start.getMonth());
   return Math.max(0, months);
 }

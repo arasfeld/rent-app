@@ -16,9 +16,12 @@ export class DashboardController {
   @Get('recent-activity')
   getRecentActivity(
     @CurrentUser('id') userId: string,
-    @Query('limit') limit?: string,
+    @Query('limit') limit?: string
   ) {
-    return this.dashboardService.getRecentActivity(userId, limit ? parseInt(limit) : 10);
+    return this.dashboardService.getRecentActivity(
+      userId,
+      limit ? parseInt(limit) : 10
+    );
   }
 
   @Get('financial-summary')
