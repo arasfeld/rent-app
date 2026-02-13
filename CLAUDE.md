@@ -92,7 +92,7 @@ app/
     leases/           → Lease list with DataTable
     payments/         → Payment list with stats + DataTable
 components/
-  layout/sidebar.tsx  → Navigation sidebar (responsive)
+  app-sidebar.tsx     → Navigation sidebar (responsive)
   ui/stat-card.tsx    → Dashboard stat card (composes @repo/ui Card)
 lib/
   api.ts              → API client (base URL: localhost:3001/api)
