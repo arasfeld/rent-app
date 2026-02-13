@@ -20,14 +20,14 @@ RentApp is a clean, opinionated SaaS platform that makes managing rental propert
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 16 (App Router), React 19, TypeScript |
-| Backend | NestJS 10, TypeScript |
-| Database | PostgreSQL, Prisma ORM |
-| UI | shadcn/ui (Radix), Tailwind CSS v4, Lucide icons |
-| Monorepo | Turborepo, pnpm workspaces |
-| Infrastructure | Docker Compose (PostgreSQL, Redis) |
+| Layer          | Technology                                       |
+| -------------- | ------------------------------------------------ |
+| Frontend       | Next.js 16 (App Router), React 19, TypeScript    |
+| Backend        | NestJS 10, TypeScript                            |
+| Database       | PostgreSQL, Prisma ORM                           |
+| UI             | shadcn/ui (Radix), Tailwind CSS v4, Lucide icons |
+| Monorepo       | Turborepo, pnpm workspaces                       |
+| Infrastructure | Docker Compose (PostgreSQL, Redis)               |
 
 ## Getting Started
 

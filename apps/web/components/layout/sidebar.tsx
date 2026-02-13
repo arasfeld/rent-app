@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@repo/ui/lib/utils';
 import { Button } from '@repo/ui/components/button';
 
@@ -122,13 +123,16 @@ export function Sidebar() {
               </div>
             </div>
             <div className="space-y-1">
-              <Link
-                href="/dashboard/settings"
-                className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              >
-                <Settings className="h-5 w-5 mr-3 text-muted-foreground" />
-                Settings
-              </Link>
+              <div className="flex items-center justify-between px-3 py-2">
+                <Link
+                  href="/dashboard/settings"
+                  className="flex items-center rounded-lg text-sm font-medium text-sidebar-foreground/70 hover:text-sidebar-accent-foreground"
+                >
+                  <Settings className="h-5 w-5 mr-3 text-muted-foreground" />
+                  Settings
+                </Link>
+                <ModeToggle />
+              </div>
               <Button
                 variant="ghost"
                 onClick={logout}

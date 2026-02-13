@@ -40,11 +40,7 @@ export function StatCard({
             ) : (
               <TrendingDown className="h-4 w-4 text-destructive mr-1" />
             )}
-            <span
-              className={
-                isPositive ? 'text-success' : 'text-destructive'
-              }
-            >
+            <span className={isPositive ? 'text-success' : 'text-destructive'}>
               {isPositive ? '+' : ''}
               {change}%
             </span>

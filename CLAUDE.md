@@ -65,6 +65,7 @@ src/
 ```
 
 **Conventions:**
+
 - Business logic lives in services, never in controllers
 - DTOs use class-validator decorators for validation
 - Global validation pipe with whitelist and transform enabled
@@ -100,6 +101,7 @@ lib/
 ```
 
 **Conventions:**
+
 - All dashboard pages are client components ('use client')
 - DataTable columns use @tanstack/react-table `ColumnDef` pattern
 - UI components import from `@repo/ui/components/*`
@@ -115,6 +117,7 @@ shadcn/ui with Radix Nova style. Tailwind CSS v4 with oklch color variables.
 **Components:** Badge, Button, Card (Card/CardHeader/CardTitle/CardContent/CardFooter), DataTable, Table
 
 **Adding shadcn components:**
+
 ```bash
 pnpm dlx shadcn@latest add <component> -c packages/ui
 ```

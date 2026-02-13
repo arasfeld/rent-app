@@ -1,8 +1,19 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { AuthProvider } from '@/lib/auth-context';
 
 export function Providers({ children }: { children: ReactNode }) {
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+      enableColorScheme
+    >
+      <AuthProvider>{children}</AuthProvider>
+    </NextThemesProvider>
+  );
 }
