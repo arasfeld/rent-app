@@ -15,7 +15,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { cn } from '@/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
+import { Button } from '@repo/ui/components/button';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -34,16 +35,17 @@ export function Sidebar() {
     <>
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-md bg-background shadow-md border"
         >
           {mobileMenuOpen ? (
             <X className="h-6 w-6" />
           ) : (
             <Menu className="h-6 w-6" />
           )}
-        </button>
+        </Button>
       </div>
 
       {/* Mobile sidebar overlay */}
@@ -127,13 +129,14 @@ export function Sidebar() {
                 <Settings className="h-5 w-5 mr-3 text-muted-foreground" />
                 Settings
               </Link>
-              <button
+              <Button
+                variant="ghost"
                 onClick={logout}
-                className="flex items-center w-full px-3 py-2 rounded-lg text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                className="flex items-center w-full justify-start px-3 py-2 text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
                 <LogOut className="h-5 w-5 mr-3 text-muted-foreground" />
                 Sign out
-              </button>
+              </Button>
             </div>
           </div>
         </div>

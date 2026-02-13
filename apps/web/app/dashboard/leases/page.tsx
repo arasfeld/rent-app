@@ -1,11 +1,15 @@
 'use client';
 
+import { ColumnDef } from '@tanstack/react-table';
+import { Calendar, FileText, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { DataTable } from '@repo/ui/components/data-table';
+import { Badge } from '@repo/ui/components/badge';
+import { Button } from '@repo/ui/components/button';
+
 import { useAuth } from '@/lib/auth-context';
 import { leasesApi } from '@/lib/api';
-import { DataTable } from '@/components/ui/data-table';
-import { Badge, getStatusVariant } from '@/components/ui/badge';
-import { FileText, Plus, Calendar } from 'lucide-react';
+import { getStatusVariant } from '@/lib/get-status-variant';
 import { formatCurrency, formatDate } from '@repo/shared/utils';
 
 export default function LeasesPage() {
@@ -23,66 +27,69 @@ export default function LeasesPage() {
     }
   }, [token]);
 
-  const columns = [
+  const columns: ColumnDef<any>[] = [
     {
-      key: 'property',
+      id: 'property',
       header: 'Property',
-      render: (lease: any) => (
+      cell: ({ row }) => (
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <FileText className="h-5 w-5 text-primary" />
           </div>
           <div className="ml-4">
-            <p className="font-medium">{lease.property?.name}</p>
+            <p className="font-medium">{row.original.property?.name}</p>
             <p className="text-sm text-muted-foreground">
-              {lease.property?.city}, {lease.property?.state}
+              {row.original.property?.city}, {row.original.property?.state}
             </p>
           </div>
         </div>
       ),
     },
     {
-      key: 'tenant',
+      id: 'tenant',
       header: 'Tenant',
-      render: (lease: any) => (
+      cell: ({ row }) => (
         <span>
-          {lease.tenant?.firstName} {lease.tenant?.lastName}
+          {row.original.tenant?.firstName} {row.original.tenant?.lastName}
         </span>
       ),
     },
     {
-      key: 'type',
+      accessorKey: 'type',
       header: 'Type',
-      render: (lease: any) => (
+      cell: ({ row }) => (
         <span className="capitalize">
-          {lease.type.toLowerCase().replace('_', '-')}
+          {row.original.type.toLowerCase().replace('_', '-')}
         </span>
       ),
     },
     {
-      key: 'dates',
+      id: 'dates',
       header: 'Term',
-      render: (lease: any) => (
+      cell: ({ row }) => (
         <div className="flex items-center text-sm">
           <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-          {formatDate(lease.startDate)} - {formatDate(lease.endDate)}
+          {formatDate(row.original.startDate)} -{' '}
+          {formatDate(row.original.endDate)}
         </div>
       ),
     },
     {
-      key: 'monthlyRent',
+      accessorKey: 'monthlyRent',
       header: 'Monthly Rent',
-      render: (lease: any) => (
-        <span className="font-medium">{formatCurrency(lease.monthlyRent)}</span>
+      cell: ({ row }) => (
+        <span className="font-medium">
+          {formatCurrency(row.original.monthlyRent)}
+        </span>
       ),
     },
     {
-      key: 'securityDeposit',
+      accessorKey: 'securityDeposit',
       header: 'Security Deposit',
-      render: (lease: any) => (
+      cell: ({ row }) => (
         <div>
-          <span>{formatCurrency(lease.securityDeposit)}</span>
-          {lease.securityDepositPaid && (
+          <span>{formatCurrency(row.original.securityDeposit)}</span>
+          {row.original.securityDepositPaid && (
             <Badge variant="success" className="ml-2">
               Paid
             </Badge>
@@ -91,10 +98,12 @@ export default function LeasesPage() {
       ),
     },
     {
-      key: 'status',
+      accessorKey: 'status',
       header: 'Status',
-      render: (lease: any) => (
-        <Badge variant={getStatusVariant(lease.status)}>{lease.status}</Badge>
+      cell: ({ row }) => (
+        <Badge variant={getStatusVariant(row.original.status)}>
+          {row.original.status}
+        </Badge>
       ),
     },
   ];
@@ -116,19 +125,14 @@ export default function LeasesPage() {
           <h1 className="text-2xl font-bold">Leases</h1>
           <p className="mt-1 text-muted-foreground">Manage lease agreements</p>
         </div>
-        <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+        <Button>
           <Plus className="h-5 w-5 mr-2" />
           Create Lease
-        </button>
+        </Button>
       </div>
 
       {/* Leases Table */}
-      <DataTable
-        columns={columns}
-        data={leases}
-        keyExtractor={(lease) => lease.id}
-        emptyMessage="No leases yet. Create a lease to connect a tenant with a property."
-      />
+      <DataTable columns={columns} data={leases} />
     </div>
   );
 }

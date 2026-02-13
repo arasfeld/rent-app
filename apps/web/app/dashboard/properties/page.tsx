@@ -3,10 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { propertiesApi } from '@/lib/api';
-import { DataTable } from '@/components/ui/data-table';
-import { Badge, getStatusVariant } from '@/components/ui/badge';
+import { DataTable } from '@repo/ui/components/data-table';
+import { Badge } from '@repo/ui/components/badge';
+import { Button } from '@repo/ui/components/button';
+import { getStatusVariant } from '@/lib/get-status-variant';
 import { Building2, Plus, MapPin } from 'lucide-react';
 import { formatCurrency } from '@repo/shared/utils';
+import { ColumnDef } from '@tanstack/react-table';
 
 export default function PropertiesPage() {
   const { token } = useAuth();
@@ -23,66 +26,66 @@ export default function PropertiesPage() {
     }
   }, [token]);
 
-  const columns = [
+  const columns: ColumnDef<any>[] = [
     {
-      key: 'name',
+      accessorKey: 'name',
       header: 'Property',
-      render: (property: any) => (
+      cell: ({ row }) => (
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <Building2 className="h-5 w-5 text-primary" />
           </div>
           <div className="ml-4">
-            <p className="font-medium">{property.name}</p>
+            <p className="font-medium">{row.original.name}</p>
             <div className="flex items-center text-sm text-muted-foreground">
               <MapPin className="h-3 w-3 mr-1" />
-              {property.city}, {property.state}
+              {row.original.city}, {row.original.state}
             </div>
           </div>
         </div>
       ),
     },
     {
-      key: 'type',
+      accessorKey: 'type',
       header: 'Type',
-      render: (property: any) => (
+      cell: ({ row }) => (
         <span className="capitalize">
-          {property.type.toLowerCase().replace('_', ' ')}
+          {row.original.type.toLowerCase().replace('_', ' ')}
         </span>
       ),
     },
     {
-      key: 'status',
+      accessorKey: 'status',
       header: 'Status',
-      render: (property: any) => (
-        <Badge variant={getStatusVariant(property.status)}>
-          {property.status}
+      cell: ({ row }) => (
+        <Badge variant={getStatusVariant(row.original.status)}>
+          {row.original.status}
         </Badge>
       ),
     },
     {
-      key: 'details',
+      id: 'details',
       header: 'Details',
-      render: (property: any) => (
+      cell: ({ row }) => (
         <span className="text-muted-foreground">
-          {property.bedrooms} bed · {property.bathrooms} bath
+          {row.original.bedrooms} bed · {row.original.bathrooms} bath
         </span>
       ),
     },
     {
-      key: 'monthlyRent',
+      accessorKey: 'monthlyRent',
       header: 'Monthly Rent',
-      render: (property: any) => (
+      cell: ({ row }) => (
         <span className="font-medium">
-          {formatCurrency(property.monthlyRent)}
+          {formatCurrency(row.original.monthlyRent)}
         </span>
       ),
     },
     {
-      key: 'tenant',
+      id: 'tenant',
       header: 'Current Tenant',
-      render: (property: any) => {
-        const activeLease = property.leases?.find(
+      cell: ({ row }) => {
+        const activeLease = row.original.leases?.find(
           (l: any) => l.status === 'ACTIVE'
         );
         if (activeLease?.tenant) {
@@ -116,19 +119,14 @@ export default function PropertiesPage() {
             Manage your rental properties
           </p>
         </div>
-        <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+        <Button>
           <Plus className="h-5 w-5 mr-2" />
           Add Property
-        </button>
+        </Button>
       </div>
 
       {/* Properties Table */}
-      <DataTable
-        columns={columns}
-        data={properties}
-        keyExtractor={(property) => property.id}
-        emptyMessage="No properties yet. Add your first property to get started."
-      />
+      <DataTable columns={columns} data={properties} />
     </div>
   );
 }

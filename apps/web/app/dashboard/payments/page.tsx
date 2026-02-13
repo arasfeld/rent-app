@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { paymentsApi } from '@/lib/api';
-import { DataTable } from '@/components/ui/data-table';
-import { Badge, getStatusVariant } from '@/components/ui/badge';
+import { DataTable } from '@repo/ui/components/data-table';
+import { Badge } from '@repo/ui/components/badge';
+import { Button } from '@repo/ui/components/button';
 import { StatCard } from '@/components/ui/stat-card';
+import { getStatusVariant } from '@/lib/get-status-variant';
 import {
   DollarSign,
   Plus,
@@ -14,6 +16,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@repo/shared/utils';
+import { ColumnDef } from '@tanstack/react-table';
 
 export default function PaymentsPage() {
   const { token } = useAuth();
@@ -33,66 +36,68 @@ export default function PaymentsPage() {
     }
   }, [token]);
 
-  const columns = [
+  const columns: ColumnDef<any>[] = [
     {
-      key: 'tenant',
+      id: 'tenant',
       header: 'Tenant',
-      render: (payment: any) => (
+      cell: ({ row }) => (
         <div>
           <p className="font-medium">
-            {payment.tenant?.firstName} {payment.tenant?.lastName}
+            {row.original.tenant?.firstName} {row.original.tenant?.lastName}
           </p>
           <p className="text-sm text-muted-foreground">
-            {payment.property?.name}
+            {row.original.property?.name}
           </p>
         </div>
       ),
     },
     {
-      key: 'type',
+      accessorKey: 'type',
       header: 'Type',
-      render: (payment: any) => (
+      cell: ({ row }) => (
         <span className="capitalize">
-          {payment.type.toLowerCase().replace('_', ' ')}
+          {row.original.type.toLowerCase().replace('_', ' ')}
         </span>
       ),
     },
     {
-      key: 'amount',
+      id: 'amount',
       header: 'Amount',
-      render: (payment: any) => (
+      cell: ({ row }) => (
         <span className="font-medium">
-          {formatCurrency(payment.totalAmount)}
+          {formatCurrency(row.original.totalAmount)}
         </span>
       ),
     },
     {
-      key: 'dueDate',
+      accessorKey: 'dueDate',
       header: 'Due Date',
-      render: (payment: any) => <span>{formatDate(payment.dueDate)}</span>,
+      cell: ({ row }) => <span>{formatDate(row.original.dueDate)}</span>,
     },
     {
-      key: 'paidDate',
+      accessorKey: 'paidDate',
       header: 'Paid Date',
-      render: (payment: any) => (
-        <span>{payment.paidDate ? formatDate(payment.paidDate) : '-'}</span>
-      ),
-    },
-    {
-      key: 'method',
-      header: 'Method',
-      render: (payment: any) => (
-        <span className="capitalize">
-          {payment.method?.toLowerCase().replace('_', ' ') || '-'}
+      cell: ({ row }) => (
+        <span>
+          {row.original.paidDate ? formatDate(row.original.paidDate) : '-'}
         </span>
       ),
     },
     {
-      key: 'status',
+      accessorKey: 'method',
+      header: 'Method',
+      cell: ({ row }) => (
+        <span className="capitalize">
+          {row.original.method?.toLowerCase().replace('_', ' ') || '-'}
+        </span>
+      ),
+    },
+    {
+      accessorKey: 'status',
       header: 'Status',
-      render: (payment: any) => (
-        <Badge variant={getStatusVariant(payment.status)}>
-          {payment.status}
+      cell: ({ row }) => (
+        <Badge variant={getStatusVariant(row.original.status)}>
+          {row.original.status}
         </Badge>
       ),
     },
@@ -122,10 +127,10 @@ export default function PaymentsPage() {
             Track and manage rent payments
           </p>
         </div>
-        <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+        <Button>
           <Plus className="h-5 w-5 mr-2" />
           Record Payment
-        </button>
+        </Button>
       </div>
 
       {/* Payment Stats */}
@@ -153,12 +158,7 @@ export default function PaymentsPage() {
       </div>
 
       {/* Payments Table */}
-      <DataTable
-        columns={columns}
-        data={payments}
-        keyExtractor={(payment) => payment.id}
-        emptyMessage="No payments recorded yet."
-      />
+      <DataTable columns={columns} data={payments} />
     </div>
   );
 }

@@ -3,10 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { tenantsApi } from '@/lib/api';
-import { DataTable } from '@/components/ui/data-table';
-import { Badge, getStatusVariant } from '@/components/ui/badge';
+import { DataTable } from '@repo/ui/components/data-table';
+import { Badge } from '@repo/ui/components/badge';
+import { Button } from '@repo/ui/components/button';
+import { getStatusVariant } from '@/lib/get-status-variant';
 import { Plus, Mail, Phone, Building2 } from 'lucide-react';
 import { formatCurrency } from '@repo/shared/utils';
+import { ColumnDef } from '@tanstack/react-table';
 
 export default function TenantsPage() {
   const { token } = useAuth();
@@ -23,52 +26,54 @@ export default function TenantsPage() {
     }
   }, [token]);
 
-  const columns = [
+  const columns: ColumnDef<any>[] = [
     {
-      key: 'name',
+      id: 'name',
       header: 'Tenant',
-      render: (tenant: any) => (
+      cell: ({ row }) => (
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
             <span className="text-primary font-medium">
-              {tenant.firstName?.[0]}
-              {tenant.lastName?.[0]}
+              {row.original.firstName?.[0]}
+              {row.original.lastName?.[0]}
             </span>
           </div>
           <div className="ml-4">
             <p className="font-medium">
-              {tenant.firstName} {tenant.lastName}
+              {row.original.firstName} {row.original.lastName}
             </p>
             <div className="flex items-center text-sm text-muted-foreground">
               <Mail className="h-3 w-3 mr-1" />
-              {tenant.email}
+              {row.original.email}
             </div>
           </div>
         </div>
       ),
     },
     {
-      key: 'phone',
+      accessorKey: 'phone',
       header: 'Phone',
-      render: (tenant: any) => (
+      cell: ({ row }) => (
         <div className="flex items-center text-muted-foreground">
           <Phone className="h-4 w-4 mr-2" />
-          {tenant.phone || '-'}
+          {row.original.phone || '-'}
         </div>
       ),
     },
     {
-      key: 'status',
+      accessorKey: 'status',
       header: 'Status',
-      render: (tenant: any) => (
-        <Badge variant={getStatusVariant(tenant.status)}>{tenant.status}</Badge>
+      cell: ({ row }) => (
+        <Badge variant={getStatusVariant(row.original.status)}>
+          {row.original.status}
+        </Badge>
       ),
     },
     {
-      key: 'property',
+      id: 'property',
       header: 'Property',
-      render: (tenant: any) => {
-        const activeLease = tenant.leases?.find(
+      cell: ({ row }) => {
+        const activeLease = row.original.leases?.find(
           (l: any) => l.status === 'ACTIVE'
         );
         if (activeLease?.property) {
@@ -83,10 +88,10 @@ export default function TenantsPage() {
       },
     },
     {
-      key: 'monthlyRent',
+      id: 'monthlyRent',
       header: 'Monthly Rent',
-      render: (tenant: any) => {
-        const activeLease = tenant.leases?.find(
+      cell: ({ row }) => {
+        const activeLease = row.original.leases?.find(
           (l: any) => l.status === 'ACTIVE'
         );
         if (activeLease) {
@@ -100,11 +105,13 @@ export default function TenantsPage() {
       },
     },
     {
-      key: 'income',
+      accessorKey: 'monthlyIncome',
       header: 'Monthly Income',
-      render: (tenant: any) => (
+      cell: ({ row }) => (
         <span>
-          {tenant.monthlyIncome ? formatCurrency(tenant.monthlyIncome) : '-'}
+          {row.original.monthlyIncome
+            ? formatCurrency(row.original.monthlyIncome)
+            : '-'}
         </span>
       ),
     },
@@ -129,19 +136,14 @@ export default function TenantsPage() {
             Manage your tenants and their information
           </p>
         </div>
-        <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
+        <Button>
           <Plus className="h-5 w-5 mr-2" />
           Add Tenant
-        </button>
+        </Button>
       </div>
 
       {/* Tenants Table */}
-      <DataTable
-        columns={columns}
-        data={tenants}
-        keyExtractor={(tenant) => tenant.id}
-        emptyMessage="No tenants yet. Add your first tenant to get started."
-      />
+      <DataTable columns={columns} data={tenants} />
     </div>
   );
 }
