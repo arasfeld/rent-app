@@ -1,134 +1,119 @@
-# Turborepo starter
+# RentApp
 
-This Turborepo starter is maintained by the Turborepo core team.
+A modern rental management platform built for small landlords, independent property managers, and DIY real estate investors.
 
-## Using this example
+## What is RentApp?
 
-Run the following command:
+RentApp is a clean, opinionated SaaS platform that makes managing rental properties simple. Track properties, tenants, leases, and payments in one place — without the bloat of enterprise property management software.
 
-```sh
-npx create-turbo@latest
+**Built for:** Landlords with 1–50 units who want something simpler than AppFolio, more modern than Buildium, and cleaner than Rentec Direct.
+
+## Features
+
+- **Property Management** — Track properties with details, status, and financials
+- **Tenant Management** — Manage tenant information, lease associations, and contact details
+- **Lease Tracking** — Create and monitor lease agreements with document support
+- **Payment Tracking** — Record and monitor rent payments with status tracking
+- **Dashboard** — At-a-glance stats, alerts for overdue payments and expiring leases, recent activity
+- **Responsive Design** — Works on desktop and mobile
+- **Dark Mode** — Built-in theme support
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Next.js 16 (App Router), React 19, TypeScript |
+| Backend | NestJS 10, TypeScript |
+| Database | PostgreSQL, Prisma ORM |
+| UI | shadcn/ui (Radix), Tailwind CSS v4, Lucide icons |
+| Monorepo | Turborepo, pnpm workspaces |
+| Infrastructure | Docker Compose (PostgreSQL, Redis) |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 18
+- pnpm 9+
+- Docker (for PostgreSQL and Redis)
+
+### Setup
+
+```bash
+# Clone and install
+git clone <repo-url>
+cd rent-app
+pnpm install
+
+# Start database services
+docker compose up -d
+
+# Configure environment
+cp .env.example apps/api/.env.local
+# Edit apps/api/.env.local with your DATABASE_URL and JWT_SECRET
+
+# Set up database
+cd apps/api
+pnpm prisma generate
+pnpm prisma migrate dev
+pnpm prisma db seed    # Seeds demo data
+cd ../..
+
+# Start development
+pnpm dev
 ```
 
-## What's inside?
+The web app runs at [http://localhost:3000](http://localhost:3000) and the API at [http://localhost:3001/api](http://localhost:3001/api).
 
-This Turborepo includes the following packages/apps:
+**Demo credentials:** demo@rentapp.com / password123
 
-### Apps and Packages
+### Useful Commands
 
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```bash
+pnpm dev                  # Run all apps
+pnpm build                # Build everything
+pnpm lint                 # Lint all packages
+pnpm check-types          # Type check all packages
+pnpm format               # Format code with Prettier
+pnpm --filter web dev     # Run only frontend
+pnpm --filter api dev     # Run only backend
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+rent-app/
+├── apps/
+│   ├── api/              # NestJS backend API
+│   └── web/              # Next.js frontend
+├── packages/
+│   ├── ui/               # Shared component library (shadcn/ui)
+│   ├── shared/           # Shared types, utils, constants
+│   ├── eslint-config/    # Shared ESLint configurations
+│   └── typescript-config/ # Shared TypeScript configurations
+└── docker-compose.yml    # PostgreSQL + Redis
 ```
 
-### Develop
+## Architecture Decisions
 
-To develop all apps and packages, run the following command:
+**Why a separate NestJS backend instead of Next.js API routes?**
 
-```
-cd my-turborepo
+The rental domain (properties, tenants, leases, payments, maintenance) benefits from structured backend architecture. NestJS provides modules, dependency injection, clean service layers, and DTO validation. This also keeps the backend framework-agnostic — supporting future mobile apps, public APIs, and third-party integrations.
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+**Why a monorepo?**
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+Shared types ensure the frontend and backend stay in sync. Shared UI components enforce design consistency. One repo, one CI pipeline, one source of truth.
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Roadmap
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+- Maintenance request tracking
+- Document storage and management
+- Stripe payment integration
+- Email and SMS notifications
+- Mobile app (React Native)
+- Public tenant portal
+- AI-powered insights and automation
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+## License
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Private — All rights reserved.
