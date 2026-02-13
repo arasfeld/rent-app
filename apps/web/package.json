@@ -4,11 +4,12 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
     "build": "next build",
-    "start": "next start",
+    "check-types": "next typegen && tsc --noEmit",
+    "clean": "rm -rf .next node_modules",
+    "dev": "next dev --port 3000",
     "lint": "eslint --max-warnings 0",
-    "check-types": "next typegen && tsc --noEmit"
+    "start": "next start"
   },
   "dependencies": {
     "@repo/shared": "workspace:*",
