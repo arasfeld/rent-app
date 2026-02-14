@@ -3,8 +3,18 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Building2, CircleAlert } from 'lucide-react';
+
 import { useAuth } from '@/lib/auth-context';
-import { Building2, Mail, Lock, User, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@repo/ui/components/alert';
+import { Button } from '@repo/ui/components/button';
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from '@repo/ui/components/field';
+import { Input } from '@repo/ui/components/input';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -57,171 +67,109 @@ export default function RegisterPage() {
     }
   };
 
-  const inputClass =
-    'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/40 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <Building2 className="mx-auto h-12 w-12 text-primary" />
-          <h2 className="mt-6 text-3xl font-bold">Create your account</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Start managing your rental properties today
-          </p>
-        </div>
-
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-md bg-destructive/10 p-4">
-              <div className="flex">
-                <AlertCircle className="h-5 w-5 text-destructive" />
-                <div className="ml-3">
-                  <p className="text-sm text-destructive">{error}</p>
-                </div>
+    <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <div className="flex flex-col gap-6">
+          <form onSubmit={handleSubmit}>
+            <FieldGroup>
+              <div className="flex flex-col items-center gap-2 text-center">
+                <Building2 className="size-8 text-primary" />
+                <h1 className="text-xl font-bold">Create your account</h1>
+                <FieldDescription>
+                  Start managing your rental properties today
+                </FieldDescription>
               </div>
-            </div>
-          )}
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium mb-2"
-                >
-                  First name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <input
+              {error && (
+                <Alert variant="destructive">
+                  <CircleAlert />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <Field>
+                  <FieldLabel htmlFor="firstName">First name</FieldLabel>
+                  <Input
                     id="firstName"
                     name="firstName"
                     type="text"
+                    placeholder="John"
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    className={`${inputClass} pl-10`}
-                    placeholder="John"
                   />
-                </div>
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="lastName">Last name</FieldLabel>
+                  <Input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    required
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                </Field>
               </div>
 
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Last name
-                </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  required
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Doe"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Email address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <input
+              <Field>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
+                  placeholder="you@example.com"
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className={`${inputClass} pl-10`}
-                  placeholder="you@example.com"
                 />
-              </div>
-            </div>
+              </Field>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium mb-2"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <input
+              <Field>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <Input
                   id="password"
                   name="password"
                   type="password"
+                  placeholder="At least 8 characters"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className={`${inputClass} pl-10`}
-                  placeholder="At least 8 characters"
                 />
-              </div>
-            </div>
+              </Field>
 
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium mb-2"
-              >
-                Confirm password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <input
+              <Field>
+                <FieldLabel htmlFor="confirmPassword">
+                  Confirm password
+                </FieldLabel>
+                <Input
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
+                  placeholder="Confirm your password"
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`${inputClass} pl-10`}
-                  placeholder="Confirm your password"
                 />
-              </div>
-            </div>
-          </div>
+              </Field>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="inline-flex items-center justify-center w-full rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-            >
-              {isLoading ? 'Creating account...' : 'Create account'}
-            </button>
-          </div>
+              <Field>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? 'Creating account...' : 'Create account'}
+                </Button>
+              </Field>
+            </FieldGroup>
+          </form>
 
-          <div className="text-center text-sm">
-            <span className="text-muted-foreground">
-              Already have an account?{' '}
-            </span>
-            <Link
-              href="/login"
-              className="font-medium text-primary hover:underline"
-            >
-              Sign in
-            </Link>
-          </div>
-        </form>
+          <FieldDescription className="text-center">
+            Already have an account? <Link href="/login">Sign in</Link>
+          </FieldDescription>
+        </div>
       </div>
     </div>
   );

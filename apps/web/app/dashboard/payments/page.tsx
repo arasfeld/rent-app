@@ -6,7 +6,7 @@ import { paymentsApi } from '@/lib/api';
 import { DataTable } from '@repo/ui/components/data-table';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
-import { StatCard } from '@/components/ui/stat-card';
+import { StatCard } from '@/components/stat-card';
 import { getStatusVariant } from '@/lib/get-status-variant';
 import {
   DollarSign,

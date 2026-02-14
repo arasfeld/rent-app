@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { dashboardApi } from '@/lib/api';
-import { StatCard } from '@/components/ui/stat-card';
+import { StatCard } from '@/components/stat-card';
 import { Badge } from '@repo/ui/components/badge';
 import {
   Card,
