@@ -2,16 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  Building2,
-  CreditCard,
-  FileText,
-  Home,
-  Users,
-} from 'lucide-react';
-
-import { useAuth } from '@/lib/auth-context';
-import { NavUser } from '@/components/nav-user';
+import { Building2, CreditCard, FileText, Home, Users } from 'lucide-react';
 
 import {
   Sidebar,
@@ -25,6 +16,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@repo/ui/components/sidebar';
+import { useAuth } from '@/lib/auth-context';
+import { NavUser } from './nav-user';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },

@@ -168,6 +168,19 @@ export const paymentsApi = {
       token,
     }),
 
+  update: (token: string, id: string, data: any) =>
+    request<any>(`/payments/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      token,
+    }),
+
+  delete: (token: string, id: string) =>
+    request<any>(`/payments/${id}`, {
+      method: 'DELETE',
+      token,
+    }),
+
   recordPayment: (token: string, data: any) =>
     request<any>('/payments/record', {
       method: 'POST',

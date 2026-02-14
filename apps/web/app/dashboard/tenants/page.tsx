@@ -1,32 +1,132 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useCallback, useEffect, useState } from 'react';
+import { Building2, Mail, Pencil, Phone, Plus, Trash2 } from 'lucide-react';
+import { formatCurrency } from '@repo/shared/utils';
+
 import { useAuth } from '@/lib/auth-context';
 import { tenantsApi } from '@/lib/api';
 import { DataTable } from '@repo/ui/components/data-table';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
+import { TenantModal } from '@/components/modals/tenant-modal';
+import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';
-import { Plus, Mail, Phone, Building2 } from 'lucide-react';
-import { formatCurrency } from '@repo/shared/utils';
-import { ColumnDef } from '@tanstack/react-table';
+import { cleanTenantData, type TenantFormData } from '@/lib/validations/tenant';
+
+interface Tenant {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  status: string;
+  dateOfBirth?: string;
+  monthlyIncome?: number;
+  emergencyContact?: {
+    name?: string;
+    relationship?: string;
+    phone?: string;
+    email?: string;
+  };
+  employmentInfo?: {
+    employer?: string;
+    position?: string;
+    monthlyIncome?: number;
+    employerPhone?: string;
+  };
+  notes?: string;
+  leases?: Array<{
+    status: string;
+    monthlyRent: number;
+    property?: {
+      name: string;
+    };
+  }>;
+}
 
 export default function TenantsPage() {
   const { token } = useAuth();
-  const [tenants, setTenants] = useState<any[]>([]);
+  const [tenants, setTenants] = useState<Tenant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (token) {
-      tenantsApi
-        .getAll(token)
-        .then((response) => setTenants(response.data))
-        .catch(console.error)
-        .finally(() => setIsLoading(false));
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
+  const [deletingTenant, setDeletingTenant] = useState<Tenant | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchTenants = useCallback(async () => {
+    if (!token) return;
+    try {
+      const response = await tenantsApi.getAll(token);
+      setTenants(response.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }, [token]);
 
-  const columns: ColumnDef<any>[] = [
+  useEffect(() => {
+    fetchTenants();
+  }, [fetchTenants]);
+
+  const handleCreate = () => {
+    setEditingTenant(null);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (tenant: Tenant) => {
+    setEditingTenant(tenant);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (tenant: Tenant) => {
+    setDeletingTenant(tenant);
+  };
+
+  const handleSubmit = async (data: TenantFormData) => {
+    if (!token) return;
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const cleanedData = cleanTenantData(data);
+      if (editingTenant) {
+        await tenantsApi.update(token, editingTenant.id, cleanedData);
+      } else {
+        await tenantsApi.create(token, cleanedData);
+      }
+      setIsModalOpen(false);
+      setEditingTenant(null);
+      fetchTenants();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!token || !deletingTenant) return;
+    setIsDeleting(true);
+    try {
+      await tenantsApi.delete(token, deletingTenant.id);
+      setDeletingTenant(null);
+      fetchTenants();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const columns: ColumnDef<Tenant>[] = [
     {
       id: 'name',
       header: 'Tenant',
@@ -74,7 +174,7 @@ export default function TenantsPage() {
       header: 'Property',
       cell: ({ row }) => {
         const activeLease = row.original.leases?.find(
-          (l: any) => l.status === 'ACTIVE'
+          (l) => l.status === 'ACTIVE'
         );
         if (activeLease?.property) {
           return (
@@ -92,7 +192,7 @@ export default function TenantsPage() {
       header: 'Monthly Rent',
       cell: ({ row }) => {
         const activeLease = row.original.leases?.find(
-          (l: any) => l.status === 'ACTIVE'
+          (l) => l.status === 'ACTIVE'
         );
         if (activeLease) {
           return (
@@ -113,6 +213,34 @@ export default function TenantsPage() {
             ? formatCurrency(row.original.monthlyIncome)
             : '-'}
         </span>
+      ),
+    },
+    {
+      id: 'actions',
+      header: '',
+      cell: ({ row }) => (
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(row.original);
+            }}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(row.original);
+            }}
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
       ),
     },
   ];
@@ -136,7 +264,7 @@ export default function TenantsPage() {
             Manage your tenants and their information
           </p>
         </div>
-        <Button>
+        <Button onClick={handleCreate}>
           <Plus className="h-5 w-5 mr-2" />
           Add Tenant
         </Button>
@@ -144,6 +272,34 @@ export default function TenantsPage() {
 
       {/* Tenants Table */}
       <DataTable columns={columns} data={tenants} />
+
+      {/* Tenant Modal */}
+      <TenantModal
+        open={isModalOpen}
+        onOpenChange={(open) => {
+          setIsModalOpen(open);
+          if (!open) {
+            setEditingTenant(null);
+            setError(null);
+          }
+        }}
+        tenant={editingTenant}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        error={error}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        open={!!deletingTenant}
+        onOpenChange={(open) => {
+          if (!open) setDeletingTenant(null);
+        }}
+        title="Delete Tenant"
+        description={`Are you sure you want to delete "${deletingTenant?.firstName} ${deletingTenant?.lastName}"? This action cannot be undone.`}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

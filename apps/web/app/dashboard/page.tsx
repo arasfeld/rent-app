@@ -1,17 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/lib/auth-context';
-import { dashboardApi } from '@/lib/api';
-import { StatCard } from '@/components/stat-card';
-import { Badge } from '@repo/ui/components/badge';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@repo/ui/components/card';
-import { getStatusVariant } from '@/lib/get-status-variant';
 import {
   Building2,
   Users,
@@ -20,7 +9,19 @@ import {
   Calendar,
   TrendingUp,
 } from 'lucide-react';
+import { Badge } from '@repo/ui/components/badge';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from '@repo/ui/components/card';
 import { formatCurrency } from '@repo/shared/utils';
+
+import { dashboardApi } from '@/lib/api';
+import { useAuth } from '@/lib/auth-context';
+import { getStatusVariant } from '@/lib/get-status-variant';
+import { StatCard } from '@/components/stat-card';
 
 interface DashboardStats {
   totalProperties: number;

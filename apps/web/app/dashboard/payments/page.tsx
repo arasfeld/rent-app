@@ -1,42 +1,165 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Pencil,
+  Plus,
+  Trash2,
+} from 'lucide-react';
+import { formatCurrency, formatDate } from '@repo/shared/utils';
+
 import { useAuth } from '@/lib/auth-context';
-import { paymentsApi } from '@/lib/api';
+import { leasesApi, paymentsApi } from '@/lib/api';
 import { DataTable } from '@repo/ui/components/data-table';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { StatCard } from '@/components/stat-card';
+import { PaymentModal } from '@/components/modals/payment-modal';
+import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';
 import {
-  DollarSign,
-  Plus,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-} from 'lucide-react';
-import { formatCurrency, formatDate } from '@repo/shared/utils';
-import { ColumnDef } from '@tanstack/react-table';
+  cleanPaymentData,
+  type PaymentFormData,
+} from '@/lib/validations/payment';
+
+interface Payment {
+  id: string;
+  leaseId: string;
+  type: string;
+  status: string;
+  amount: number;
+  totalAmount: number;
+  lateFee?: number;
+  method?: string;
+  dueDate: string;
+  paidDate?: string;
+  periodStart?: string;
+  periodEnd?: string;
+  notes?: string;
+  tenant?: {
+    firstName: string;
+    lastName: string;
+  };
+  property?: {
+    name: string;
+  };
+}
+
+interface Lease {
+  id: string;
+  status: string;
+  monthlyRent: number;
+  property?: {
+    name: string;
+  };
+  tenant?: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+interface Summary {
+  totalCollected?: number;
+  paymentsThisMonth?: number;
+  totalPending?: number;
+  totalOverdue?: number;
+}
 
 export default function PaymentsPage() {
   const { token } = useAuth();
-  const [payments, setPayments] = useState<any[]>([]);
-  const [summary, setSummary] = useState<any>(null);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [leases, setLeases] = useState<Lease[]>([]);
+  const [summary, setSummary] = useState<Summary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (token) {
-      Promise.all([paymentsApi.getAll(token), paymentsApi.getSummary(token)])
-        .then(([paymentsResponse, summaryData]) => {
-          setPayments(paymentsResponse.data);
-          setSummary(summaryData);
-        })
-        .catch(console.error)
-        .finally(() => setIsLoading(false));
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPayment, setEditingPayment] = useState<Payment | null>(null);
+  const [deletingPayment, setDeletingPayment] = useState<Payment | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!token) return;
+    try {
+      const [paymentsRes, summaryRes, leasesRes] = await Promise.all([
+        paymentsApi.getAll(token),
+        paymentsApi.getSummary(token),
+        leasesApi.getAll(token),
+      ]);
+      setPayments(paymentsRes.data);
+      setSummary(summaryRes);
+      // Only include active leases for the form
+      setLeases(leasesRes.data.filter((l: Lease) => l.status === 'ACTIVE'));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }, [token]);
 
-  const columns: ColumnDef<any>[] = [
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleCreate = () => {
+    setEditingPayment(null);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (payment: Payment) => {
+    setEditingPayment(payment);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (payment: Payment) => {
+    setDeletingPayment(payment);
+  };
+
+  const handleSubmit = async (data: PaymentFormData) => {
+    if (!token) return;
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const cleanedData = cleanPaymentData(data);
+      if (editingPayment) {
+        await paymentsApi.update(token, editingPayment.id, cleanedData);
+      } else {
+        await paymentsApi.create(token, cleanedData);
+      }
+      setIsModalOpen(false);
+      setEditingPayment(null);
+      fetchData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!token || !deletingPayment) return;
+    setIsDeleting(true);
+    try {
+      await paymentsApi.delete(token, deletingPayment.id);
+      setDeletingPayment(null);
+      fetchData();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const columns: ColumnDef<Payment>[] = [
     {
       id: 'tenant',
       header: 'Tenant',
@@ -101,6 +224,34 @@ export default function PaymentsPage() {
         </Badge>
       ),
     },
+    {
+      id: 'actions',
+      header: '',
+      cell: ({ row }) => (
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(row.original);
+            }}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(row.original);
+            }}
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   if (isLoading) {
@@ -127,7 +278,7 @@ export default function PaymentsPage() {
             Track and manage rent payments
           </p>
         </div>
-        <Button>
+        <Button onClick={handleCreate}>
           <Plus className="h-5 w-5 mr-2" />
           Record Payment
         </Button>
@@ -159,6 +310,35 @@ export default function PaymentsPage() {
 
       {/* Payments Table */}
       <DataTable columns={columns} data={payments} />
+
+      {/* Payment Modal */}
+      <PaymentModal
+        open={isModalOpen}
+        onOpenChange={(open) => {
+          setIsModalOpen(open);
+          if (!open) {
+            setEditingPayment(null);
+            setError(null);
+          }
+        }}
+        payment={editingPayment}
+        leases={leases}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        error={error}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        open={!!deletingPayment}
+        onOpenChange={(open) => {
+          if (!open) setDeletingPayment(null);
+        }}
+        title="Delete Payment"
+        description="Are you sure you want to delete this payment record? This action cannot be undone."
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

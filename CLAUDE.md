@@ -87,17 +87,20 @@ app/
   register/           → Public registration page
   dashboard/          → Protected layout with sidebar
     page.tsx          → Overview with stats, alerts, recent activity
-    properties/       → Property list with DataTable
-    tenants/          → Tenant list with DataTable
-    leases/           → Lease list with DataTable
-    payments/         → Payment list with stats + DataTable
+    properties/       → Property CRUD with DataTable
+    tenants/          → Tenant CRUD with DataTable
+    leases/           → Lease CRUD with DataTable
+    payments/         → Payment CRUD with stats + DataTable
 components/
   app-sidebar.tsx     → Navigation sidebar (responsive)
-  ui/stat-card.tsx    → Dashboard stat card (composes @repo/ui Card)
+  stat-card.tsx       → Dashboard stat card (composes Card)
+  forms/              → Entity forms (property, tenant, lease, payment)
+  modals/             → CRUD modals (entity modals + delete confirmation)
 lib/
   api.ts              → API client (base URL: localhost:3001/api)
   auth-context.tsx    → Auth state provider (React Context)
   get-status-variant.ts → Maps entity statuses to Badge variants
+  validations/        → Zod schemas for entity forms
 ```
 
 **Conventions:**
@@ -108,13 +111,14 @@ lib/
 - Utility functions import from `@repo/shared/utils`
 - `cn()` utility imported from `@repo/ui/lib/utils`
 - Icons from `lucide-react`
-- Transpiled packages: @repo/shared, @repo/ui (configured in next.config.js)
+- Forms use react-hook-form with Zod validation via `@hookform/resolvers`
+- CRUD pattern: modal dialogs with form components, delete confirmation modal
 
 ## Shared UI Package (packages/ui)
 
 shadcn/ui with Radix Nova style. Tailwind CSS v4 with oklch color variables.
 
-**Components:** Badge, Button, Card (Card/CardHeader/CardTitle/CardContent/CardFooter), DataTable, Table
+**Components:** Alert, Avatar, Badge, Breadcrumb, Button, Card, DataTable, Dialog, DropdownMenu, Field, Input, Label, ScrollArea, Select, Separator, Sheet, Sidebar, Skeleton, Table, Textarea, Tooltip
 
 **Adding shadcn components:**
 

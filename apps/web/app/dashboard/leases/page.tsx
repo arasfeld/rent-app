@@ -1,33 +1,147 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Calendar, FileText, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { DataTable } from '@repo/ui/components/data-table';
-import { Badge } from '@repo/ui/components/badge';
-import { Button } from '@repo/ui/components/button';
+import { useCallback, useEffect, useState } from 'react';
+import { Calendar, FileText, Pencil, Plus, Trash2 } from 'lucide-react';
+import { formatCurrency, formatDate } from '@repo/shared/utils';
 
 import { useAuth } from '@/lib/auth-context';
-import { leasesApi } from '@/lib/api';
+import { leasesApi, propertiesApi, tenantsApi } from '@/lib/api';
+import { Badge } from '@repo/ui/components/badge';
+import { Button } from '@repo/ui/components/button';
+import { DataTable } from '@repo/ui/components/data-table';
+import { LeaseModal } from '@/components/modals/lease-modal';
+import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';
-import { formatCurrency, formatDate } from '@repo/shared/utils';
+import { cleanLeaseData, type LeaseFormData } from '@/lib/validations/lease';
+
+interface Lease {
+  id: string;
+  propertyId: string;
+  tenantId: string;
+  type: string;
+  status: string;
+  startDate: string;
+  endDate: string;
+  monthlyRent: number;
+  securityDeposit: number;
+  securityDepositPaid?: boolean;
+  lateFeeAmount?: number;
+  lateFeeGracePeriodDays?: number;
+  paymentDueDay?: number;
+  terms?: string;
+  property?: {
+    name: string;
+    city?: string;
+    state?: string;
+  };
+  tenant?: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+interface Property {
+  id: string;
+  name: string;
+  monthlyRent: number;
+}
+
+interface Tenant {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
 
 export default function LeasesPage() {
   const { token } = useAuth();
-  const [leases, setLeases] = useState<any[]>([]);
+  const [leases, setLeases] = useState<Lease[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [tenants, setTenants] = useState<Tenant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (token) {
-      leasesApi
-        .getAll(token)
-        .then((response) => setLeases(response.data))
-        .catch(console.error)
-        .finally(() => setIsLoading(false));
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingLease, setEditingLease] = useState<Lease | null>(null);
+  const [deletingLease, setDeletingLease] = useState<Lease | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!token) return;
+    try {
+      const [leasesRes, propertiesRes, tenantsRes] = await Promise.all([
+        leasesApi.getAll(token),
+        propertiesApi.getAll(token),
+        tenantsApi.getAll(token),
+      ]);
+      setLeases(leasesRes.data);
+      setProperties(propertiesRes.data);
+      setTenants(tenantsRes.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }, [token]);
 
-  const columns: ColumnDef<any>[] = [
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleCreate = () => {
+    setEditingLease(null);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (lease: Lease) => {
+    setEditingLease(lease);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (lease: Lease) => {
+    setDeletingLease(lease);
+  };
+
+  const handleSubmit = async (data: LeaseFormData) => {
+    if (!token) return;
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const cleanedData = cleanLeaseData(data);
+      if (editingLease) {
+        await leasesApi.update(token, editingLease.id, cleanedData);
+      } else {
+        await leasesApi.create(token, cleanedData);
+      }
+      setIsModalOpen(false);
+      setEditingLease(null);
+      fetchData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!token || !deletingLease) return;
+    setIsDeleting(true);
+    try {
+      await leasesApi.delete(token, deletingLease.id);
+      setDeletingLease(null);
+      fetchData();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const columns: ColumnDef<Lease>[] = [
     {
       id: 'property',
       header: 'Property',
@@ -106,6 +220,34 @@ export default function LeasesPage() {
         </Badge>
       ),
     },
+    {
+      id: 'actions',
+      header: '',
+      cell: ({ row }) => (
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(row.original);
+            }}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(row.original);
+            }}
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   if (isLoading) {
@@ -125,7 +267,7 @@ export default function LeasesPage() {
           <h1 className="text-2xl font-bold">Leases</h1>
           <p className="mt-1 text-muted-foreground">Manage lease agreements</p>
         </div>
-        <Button>
+        <Button onClick={handleCreate}>
           <Plus className="h-5 w-5 mr-2" />
           Create Lease
         </Button>
@@ -133,6 +275,36 @@ export default function LeasesPage() {
 
       {/* Leases Table */}
       <DataTable columns={columns} data={leases} />
+
+      {/* Lease Modal */}
+      <LeaseModal
+        open={isModalOpen}
+        onOpenChange={(open) => {
+          setIsModalOpen(open);
+          if (!open) {
+            setEditingLease(null);
+            setError(null);
+          }
+        }}
+        lease={editingLease}
+        properties={properties}
+        tenants={tenants}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        error={error}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        open={!!deletingLease}
+        onOpenChange={(open) => {
+          if (!open) setDeletingLease(null);
+        }}
+        title="Delete Lease"
+        description="Are you sure you want to delete this lease? This action cannot be undone."
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

@@ -10,12 +10,13 @@ RentApp is a clean, opinionated SaaS platform that makes managing rental propert
 
 ## Features
 
-- **Property Management** — Track properties with details, status, and financials
-- **Tenant Management** — Manage tenant information, lease associations, and contact details
-- **Lease Tracking** — Create and monitor lease agreements with document support
-- **Payment Tracking** — Record and monitor rent payments with status tracking
+- **Property Management** — Full CRUD with address, rent, and property details
+- **Tenant Management** — Full CRUD with emergency contacts and employment info
+- **Lease Tracking** — Full CRUD with property/tenant association, financial details, and date validation
+- **Payment Tracking** — Full CRUD with lease association, payment stats, and status tracking
 - **Dashboard** — At-a-glance stats, alerts for overdue payments and expiring leases, recent activity
-- **Responsive Design** — Works on desktop and mobile
+- **Form Validation** — Zod schemas with react-hook-form for all entity forms
+- **Responsive Design** — Works on desktop and mobile with collapsible sidebar
 - **Dark Mode** — Built-in theme support
 
 ## Tech Stack

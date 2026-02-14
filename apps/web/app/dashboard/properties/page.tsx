@@ -1,32 +1,138 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useCallback, useEffect, useState } from 'react';
+import { Building2, MapPin, Pencil, Plus, Trash2 } from 'lucide-react';
+import { formatCurrency } from '@repo/shared/utils';
+
 import { useAuth } from '@/lib/auth-context';
 import { propertiesApi } from '@/lib/api';
 import { DataTable } from '@repo/ui/components/data-table';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
+import { PropertyModal } from '@/components/modals/property-modal';
+import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';
-import { Building2, Plus, MapPin } from 'lucide-react';
-import { formatCurrency } from '@repo/shared/utils';
-import { ColumnDef } from '@tanstack/react-table';
+import {
+  cleanPropertyData,
+  type PropertyFormData,
+} from '@/lib/validations/property';
+
+interface Property {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  address?: {
+    street?: string;
+    unit?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+  };
+  monthlyRent: number;
+  securityDeposit?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  squareFeet?: number;
+  yearBuilt?: number;
+  description?: string;
+  leases?: Array<{
+    status: string;
+    tenant?: {
+      firstName: string;
+      lastName: string;
+    };
+  }>;
+}
 
 export default function PropertiesPage() {
   const { token } = useAuth();
-  const [properties, setProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (token) {
-      propertiesApi
-        .getAll(token)
-        .then((response) => setProperties(response.data))
-        .catch(console.error)
-        .finally(() => setIsLoading(false));
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+  const [deletingProperty, setDeletingProperty] = useState<Property | null>(
+    null
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchProperties = useCallback(async () => {
+    if (!token) return;
+    try {
+      const response = await propertiesApi.getAll(token);
+      setProperties(response.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }, [token]);
 
-  const columns: ColumnDef<any>[] = [
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
+
+  const handleCreate = () => {
+    setEditingProperty(null);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (property: Property) => {
+    setEditingProperty(property);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (property: Property) => {
+    setDeletingProperty(property);
+  };
+
+  const handleSubmit = async (data: PropertyFormData) => {
+    if (!token) return;
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const cleanedData = cleanPropertyData(data);
+      if (editingProperty) {
+        await propertiesApi.update(token, editingProperty.id, cleanedData);
+      } else {
+        await propertiesApi.create(token, cleanedData);
+      }
+      setIsModalOpen(false);
+      setEditingProperty(null);
+      fetchProperties();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!token || !deletingProperty) return;
+    setIsDeleting(true);
+    try {
+      await propertiesApi.delete(token, deletingProperty.id);
+      setDeletingProperty(null);
+      fetchProperties();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const columns: ColumnDef<Property>[] = [
     {
       accessorKey: 'name',
       header: 'Property',
@@ -39,7 +145,8 @@ export default function PropertiesPage() {
             <p className="font-medium">{row.original.name}</p>
             <div className="flex items-center text-sm text-muted-foreground">
               <MapPin className="h-3 w-3 mr-1" />
-              {row.original.city}, {row.original.state}
+              {row.original.address?.city ?? row.original.city},{' '}
+              {row.original.address?.state ?? row.original.state}
             </div>
           </div>
         </div>
@@ -68,7 +175,8 @@ export default function PropertiesPage() {
       header: 'Details',
       cell: ({ row }) => (
         <span className="text-muted-foreground">
-          {row.original.bedrooms} bed · {row.original.bathrooms} bath
+          {row.original.bedrooms ?? '\u2013'} bed ·{' '}
+          {row.original.bathrooms ?? '\u2013'} bath
         </span>
       ),
     },
@@ -86,7 +194,7 @@ export default function PropertiesPage() {
       header: 'Current Tenant',
       cell: ({ row }) => {
         const activeLease = row.original.leases?.find(
-          (l: any) => l.status === 'ACTIVE'
+          (l) => l.status === 'ACTIVE'
         );
         if (activeLease?.tenant) {
           return (
@@ -97,6 +205,34 @@ export default function PropertiesPage() {
         }
         return <span className="text-muted-foreground">Vacant</span>;
       },
+    },
+    {
+      id: 'actions',
+      header: '',
+      cell: ({ row }) => (
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(row.original);
+            }}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(row.original);
+            }}
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -119,7 +255,7 @@ export default function PropertiesPage() {
             Manage your rental properties
           </p>
         </div>
-        <Button>
+        <Button onClick={handleCreate}>
           <Plus className="h-5 w-5 mr-2" />
           Add Property
         </Button>
@@ -127,6 +263,34 @@ export default function PropertiesPage() {
 
       {/* Properties Table */}
       <DataTable columns={columns} data={properties} />
+
+      {/* Property Modal */}
+      <PropertyModal
+        open={isModalOpen}
+        onOpenChange={(open) => {
+          setIsModalOpen(open);
+          if (!open) {
+            setEditingProperty(null);
+            setError(null);
+          }
+        }}
+        property={editingProperty}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        error={error}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        open={!!deletingProperty}
+        onOpenChange={(open) => {
+          if (!open) setDeletingProperty(null);
+        }}
+        title="Delete Property"
+        description={`Are you sure you want to delete "${deletingProperty?.name}"? This action cannot be undone.`}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }
