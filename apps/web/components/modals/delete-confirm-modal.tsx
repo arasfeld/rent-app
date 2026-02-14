@@ -1,14 +1,16 @@
 'use client';
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@repo/ui/components/dialog';
-import { Button } from '@repo/ui/components/button';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from '@repo/ui/components/alert-dialog';
 import { Loader2, AlertTriangle } from 'lucide-react';
 
 interface DeleteConfirmModalProps {
@@ -34,35 +36,34 @@ export function DeleteConfirmModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
-            </div>
-            <DialogTitle>{title}</DialogTitle>
-          </div>
-          <DialogDescription className="pt-2">{description}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent size="sm">
+        <AlertDialogHeader>
+          <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+          </AlertDialogMedia>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
           >
             Cancel
-          </Button>
-          <Button
+          </AlertDialogCancel>
+          <AlertDialogAction
             variant="destructive"
             onClick={handleConfirm}
             disabled={isDeleting}
           >
             {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
