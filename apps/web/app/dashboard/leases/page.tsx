@@ -1,6 +1,6 @@
 'use client';
 
-import { formatCurrency, formatDate } from '@repo/shared';
+import { formatCurrency, formatDate } from '@repo/core';
 import { Badge, Button, DataTable } from '@repo/ui';
 import { ColumnDef } from '@tanstack/react-table';
 import { Calendar, FileText, Pencil, Plus, Trash2 } from 'lucide-react';

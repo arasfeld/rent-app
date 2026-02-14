@@ -19,7 +19,7 @@ import type {
   UpdateLeaseDto,
   UpdatePaymentDto,
   User,
-} from '@repo/shared';
+} from '@repo/core';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export const api = createApi({

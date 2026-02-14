@@ -1,6 +1,6 @@
 'use client';
 
-import { formatCurrency } from '@repo/shared';
+import { formatCurrency } from '@repo/core';
 import { Badge, Button, DataTable } from '@repo/ui';
 import { ColumnDef } from '@tanstack/react-table';
 import { Building2, MapPin, Pencil, Plus, Trash2 } from 'lucide-react';

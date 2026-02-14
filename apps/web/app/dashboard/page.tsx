@@ -1,6 +1,6 @@
 'use client';
 
-import { formatCurrency } from '@repo/shared';
+import { formatCurrency } from '@repo/core';
 import { Badge, Card, CardHeader, CardTitle, CardContent } from '@repo/ui';
 import {
   Building2,

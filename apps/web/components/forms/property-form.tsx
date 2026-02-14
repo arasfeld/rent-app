@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { US_STATES } from '@repo/shared';
+import { US_STATES } from '@repo/core';
 import {
   Alert,
   AlertDescription,

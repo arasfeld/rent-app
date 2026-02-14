@@ -41,9 +41,9 @@ importers:
       '@prisma/client':
         specifier: ^6.2.1
         version: 6.19.2(prisma@6.19.2(typescript@5.9.2))(typescript@5.9.2)
-      '@repo/shared':
+      '@repo/core':
         specifier: workspace:*
-        version: link:../../packages/shared
+        version: link:../../packages/core
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -72,12 +72,12 @@ importers:
       '@nestjs/schematics':
         specifier: ^10.2.3
         version: 10.2.3(chokidar@3.6.0)(typescript@5.9.2)
-      '@repo/eslint-config':
+      '@repo/config-eslint':
         specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@repo/typescript-config':
+        version: link:../../packages/config-eslint
+      '@repo/config-typescript':
         specifier: workspace:*
-        version: link:../../packages/typescript-config
+        version: link:../../packages/config-typescript
       '@types/bcrypt':
         specifier: ^5.0.2
         version: 5.0.2
@@ -114,9 +114,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.11.2
         version: 2.11.2(react-redux@9.2.0(@types/react@19.2.2)(react@19.2.0)(redux@5.0.1))(react@19.2.0)
-      '@repo/shared':
+      '@repo/core':
         specifier: workspace:*
-        version: link:../../packages/shared
+        version: link:../../packages/core
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -148,12 +148,12 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@repo/eslint-config':
+      '@repo/config-eslint':
         specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@repo/typescript-config':
+        version: link:../../packages/config-eslint
+      '@repo/config-typescript':
         specifier: workspace:*
-        version: link:../../packages/typescript-config
+        version: link:../../packages/config-typescript
       '@tailwindcss/postcss':
         specifier: ^4.1.18
         version: 4.1.18
@@ -176,7 +176,7 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
-  packages/eslint-config:
+  packages/config-eslint:
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.1
@@ -215,19 +215,19 @@ importers:
         specifier: ^8.50.0
         version: 8.50.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.2)
 
-  packages/shared:
+  packages/config-typescript: {}
+
+  packages/core:
     devDependencies:
-      '@repo/eslint-config':
+      '@repo/config-eslint':
         specifier: workspace:*
-        version: link:../eslint-config
-      '@repo/typescript-config':
+        version: link:../config-eslint
+      '@repo/config-typescript':
         specifier: workspace:*
-        version: link:../typescript-config
+        version: link:../config-typescript
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
-
-  packages/typescript-config: {}
 
   packages/ui:
     dependencies:
@@ -262,12 +262,12 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
-      '@repo/eslint-config':
+      '@repo/config-eslint':
         specifier: workspace:*
-        version: link:../eslint-config
-      '@repo/typescript-config':
+        version: link:../config-eslint
+      '@repo/config-typescript':
         specifier: workspace:*
-        version: link:../typescript-config
+        version: link:../config-typescript
       '@tailwindcss/postcss':
         specifier: ^4.1.18
         version: 4.1.18
@@ -3234,6 +3234,7 @@ packages:
 
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
+    hasBin: true
 
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
@@ -3792,6 +3793,7 @@ packages:
 
   resolve@2.0.0-next.5:
     resolution: {integrity: sha512-U7WjGVG9sH8tvjW5SmGbQuui75FiyjAX72HX15DwBBwF9dNiQZRQAg9nnPhYy+TUnE0+VcrttuvNI8oSxZcocA==}
+    hasBin: true
 
   restore-cursor@3.1.0:
     resolution: {integrity: sha512-l+sSefzHpj5qimhFSE5a8nufZYAM3sBSVMAPtYkmC+4EH2anSGaEMXSD0izRQbu9nfyQ9y5JrVmp7E8oZrUjvA==}

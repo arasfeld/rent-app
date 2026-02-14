@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { api } from './api';
 
-import type { User } from '@repo/shared';
+import type { User } from '@repo/core';
 
 export interface AuthState {
   user: User | null;

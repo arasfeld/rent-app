@@ -17,10 +17,10 @@ apps/
   api/          → NestJS 10 backend (port 3001, prefix /api)
   web/          → Next.js 16 frontend (App Router, React 19)
 packages/
-  ui/           → shadcn/ui component library (Radix Nova style, Tailwind v4)
-  shared/       → Types, utils (currency, date, validation), constants
-  eslint-config/ → Shared ESLint configs (base, next, react-internal)
-  typescript-config/ → Shared tsconfig (base, nextjs, react-library)
+  config-eslint/     → Shared ESLint configs (base, next, react-internal)
+  config-typescript/ → Shared tsconfig (base, nextjs, react-library)
+  core/              → Types, utils (currency, date, validation), constants
+  ui/                → shadcn/ui component library (Radix Nova style, Tailwind v4)
 ```
 
 ## Commands
@@ -107,9 +107,8 @@ lib/
 
 - All dashboard pages are client components ('use client')
 - DataTable columns use @tanstack/react-table `ColumnDef` pattern
-- UI components import from `@repo/ui/components/*`
-- Utility functions import from `@repo/shared/utils`
-- `cn()` utility imported from `@repo/ui/lib/utils`
+- Core constants, functions, and types import from `@repo/core`
+- UI components & `cn()` utility import from `@repo/ui`
 - Icons from `lucide-react`
 - Forms use react-hook-form with Zod validation via `@hookform/resolvers`
 - CRUD pattern: modal dialogs with form components, delete confirmation modal
@@ -118,7 +117,7 @@ lib/
 
 shadcn/ui with Radix Nova style. Tailwind CSS v4 with oklch color variables.
 
-**Components:** Alert, Avatar, Badge, Breadcrumb, Button, Card, DataTable, Dialog, DropdownMenu, Field, Input, Label, ScrollArea, Select, Separator, Sheet, Sidebar, Skeleton, Table, Textarea, Tooltip
+**Components:** Alert, AlertDialog, Avatar, Badge, Breadcrumb, Button, Card, DataTable, Dialog, DropdownMenu, Field, Input, Label, ScrollArea, Select, Separator, Sheet, Sidebar, Skeleton, Table, Textarea, Tooltip
 
 **Adding shadcn components:**
 
@@ -126,11 +125,11 @@ shadcn/ui with Radix Nova style. Tailwind CSS v4 with oklch color variables.
 pnpm dlx shadcn@latest add <component> -c packages/ui
 ```
 
-Components are exported via package.json exports map: `@repo/ui/components/*`, `@repo/ui/lib/*`, `@repo/ui/hooks/*`.
+Components are exported via package.json exports map: `@repo/ui/*`, `@repo/ui/components/*`, `@repo/ui/lib/*`, `@repo/ui/hooks/*`.
 
 ## Shared Package (packages/shared)
 
-Types mirror Prisma enums and entity shapes. Exports: `@repo/shared/types`, `@repo/shared/utils`, `@repo/shared/constants`.
+Types mirror Prisma enums and entity shapes. Exports: `@repo/core/types`, `@repo/core/utils`, `@repo/core/constants`.
 
 **Key utils:** `formatCurrency()`, `formatDate()`, validation helpers.
 

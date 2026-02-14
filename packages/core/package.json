@@ -1,5 +1,5 @@
 {
-  "name": "@repo/shared",
+  "name": "@repo/core",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",
@@ -16,8 +16,8 @@
     "lint": "eslint . --max-warnings 0"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@repo/config-eslint": "workspace:*",
+    "@repo/config-typescript": "workspace:*",
     "typescript": "^5.9.2"
   }
 }

@@ -85,14 +85,14 @@ pnpm --filter api dev     # Run only backend
 ```
 rent-app/
 ├── apps/
-│   ├── api/              # NestJS backend API
-│   └── web/              # Next.js frontend
+│   ├── api/               # NestJS backend API
+│   └── web/               # Next.js frontend
 ├── packages/
-│   ├── ui/               # Shared component library (shadcn/ui)
-│   ├── shared/           # Shared types, utils, constants
-│   ├── eslint-config/    # Shared ESLint configurations
-│   └── typescript-config/ # Shared TypeScript configurations
-└── docker-compose.yml    # PostgreSQL + Redis
+│   ├── config-eslint/     # Shared ESLint configurations
+│   ├── config-typescript/ # Shared TypeScript configurations
+│   ├── core/              # Shared types, utils, constants
+│   └── ui/                # Shared component library (shadcn/ui)
+└── docker-compose.yml     # PostgreSQL + Redis
 ```
 
 ## Architecture Decisions
