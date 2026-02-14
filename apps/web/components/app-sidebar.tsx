@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@repo/ui/components/sidebar';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/lib/hooks';
 import { NavUser } from './nav-user';
 
 const navigation = [

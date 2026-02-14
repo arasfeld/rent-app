@@ -1,12 +1,18 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Calendar, FileText, Pencil, Plus, Trash2 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@repo/shared/utils';
 
-import { useAuth } from '@/lib/auth-context';
-import { leasesApi, propertiesApi, tenantsApi } from '@/lib/api';
+import {
+  useGetLeasesQuery,
+  useGetPropertiesQuery,
+  useGetTenantsQuery,
+  useCreateLeaseMutation,
+  useUpdateLeaseMutation,
+  useDeleteLeaseMutation,
+} from '@/lib/api';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { DataTable } from '@repo/ui/components/data-table';
@@ -54,11 +60,16 @@ interface Tenant {
 }
 
 export default function LeasesPage() {
-  const { token } = useAuth();
-  const [leases, setLeases] = useState<Lease[]>([]);
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [tenants, setTenants] = useState<Tenant[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: leasesData, isLoading: leasesLoading } = useGetLeasesQuery();
+  const { data: propertiesData } = useGetPropertiesQuery();
+  const { data: tenantsData } = useGetTenantsQuery();
+  const [createLease] = useCreateLeaseMutation();
+  const [updateLease] = useUpdateLeaseMutation();
+  const [deleteLease] = useDeleteLeaseMutation();
+
+  const leases = (leasesData?.data ?? []) as Lease[];
+  const properties = (propertiesData?.data ?? []) as Property[];
+  const tenants = (tenantsData?.data ?? []) as Tenant[];
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,28 +78,6 @@ export default function LeasesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchData = useCallback(async () => {
-    if (!token) return;
-    try {
-      const [leasesRes, propertiesRes, tenantsRes] = await Promise.all([
-        leasesApi.getAll(token),
-        propertiesApi.getAll(token),
-        tenantsApi.getAll(token),
-      ]);
-      setLeases(leasesRes.data);
-      setProperties(propertiesRes.data);
-      setTenants(tenantsRes.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const handleCreate = () => {
     setEditingLease(null);
@@ -107,19 +96,20 @@ export default function LeasesPage() {
   };
 
   const handleSubmit = async (data: LeaseFormData) => {
-    if (!token) return;
     setIsSubmitting(true);
     setError(null);
     try {
       const cleanedData = cleanLeaseData(data);
       if (editingLease) {
-        await leasesApi.update(token, editingLease.id, cleanedData);
+        await updateLease({
+          id: editingLease.id,
+          data: cleanedData as any,
+        }).unwrap();
       } else {
-        await leasesApi.create(token, cleanedData);
+        await createLease(cleanedData as any).unwrap();
       }
       setIsModalOpen(false);
       setEditingLease(null);
-      fetchData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -128,12 +118,11 @@ export default function LeasesPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!token || !deletingLease) return;
+    if (!deletingLease) return;
     setIsDeleting(true);
     try {
-      await leasesApi.delete(token, deletingLease.id);
+      await deleteLease(deletingLease.id).unwrap();
       setDeletingLease(null);
-      fetchData();
     } catch (err) {
       console.error(err);
     } finally {
@@ -250,7 +239,7 @@ export default function LeasesPage() {
     },
   ];
 
-  if (isLoading) {
+  if (leasesLoading) {
     return (
       <div className="animate-pulse space-y-6">
         <div className="h-8 w-48 bg-muted rounded" />

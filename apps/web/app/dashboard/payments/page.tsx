@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle,
@@ -13,8 +13,14 @@ import {
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@repo/shared/utils';
 
-import { useAuth } from '@/lib/auth-context';
-import { leasesApi, paymentsApi } from '@/lib/api';
+import {
+  useGetPaymentsQuery,
+  useGetPaymentSummaryQuery,
+  useGetLeasesQuery,
+  useCreatePaymentMutation,
+  useUpdatePaymentMutation,
+  useDeletePaymentMutation,
+} from '@/lib/api';
 import { DataTable } from '@repo/ui/components/data-table';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
@@ -63,19 +69,19 @@ interface Lease {
   };
 }
 
-interface Summary {
-  totalCollected?: number;
-  paymentsThisMonth?: number;
-  totalPending?: number;
-  totalOverdue?: number;
-}
-
 export default function PaymentsPage() {
-  const { token } = useAuth();
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [leases, setLeases] = useState<Lease[]>([]);
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: paymentsData, isLoading: paymentsLoading } =
+    useGetPaymentsQuery();
+  const { data: summary } = useGetPaymentSummaryQuery();
+  const { data: leasesData } = useGetLeasesQuery();
+  const [createPayment] = useCreatePaymentMutation();
+  const [updatePayment] = useUpdatePaymentMutation();
+  const [deletePayment] = useDeletePaymentMutation();
+
+  const payments = (paymentsData?.data ?? []) as unknown as Payment[];
+  const leases = ((leasesData?.data ?? []) as Lease[]).filter(
+    (l) => l.status === 'ACTIVE'
+  );
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,29 +90,6 @@ export default function PaymentsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchData = useCallback(async () => {
-    if (!token) return;
-    try {
-      const [paymentsRes, summaryRes, leasesRes] = await Promise.all([
-        paymentsApi.getAll(token),
-        paymentsApi.getSummary(token),
-        leasesApi.getAll(token),
-      ]);
-      setPayments(paymentsRes.data);
-      setSummary(summaryRes);
-      // Only include active leases for the form
-      setLeases(leasesRes.data.filter((l: Lease) => l.status === 'ACTIVE'));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const handleCreate = () => {
     setEditingPayment(null);
@@ -125,19 +108,20 @@ export default function PaymentsPage() {
   };
 
   const handleSubmit = async (data: PaymentFormData) => {
-    if (!token) return;
     setIsSubmitting(true);
     setError(null);
     try {
       const cleanedData = cleanPaymentData(data);
       if (editingPayment) {
-        await paymentsApi.update(token, editingPayment.id, cleanedData);
+        await updatePayment({
+          id: editingPayment.id,
+          data: cleanedData as any,
+        }).unwrap();
       } else {
-        await paymentsApi.create(token, cleanedData);
+        await createPayment(cleanedData as any).unwrap();
       }
       setIsModalOpen(false);
       setEditingPayment(null);
-      fetchData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -146,12 +130,11 @@ export default function PaymentsPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!token || !deletingPayment) return;
+    if (!deletingPayment) return;
     setIsDeleting(true);
     try {
-      await paymentsApi.delete(token, deletingPayment.id);
+      await deletePayment(deletingPayment.id).unwrap();
       setDeletingPayment(null);
-      fetchData();
     } catch (err) {
       console.error(err);
     } finally {
@@ -254,7 +237,7 @@ export default function PaymentsPage() {
     },
   ];
 
-  if (isLoading) {
+  if (paymentsLoading) {
     return (
       <div className="animate-pulse space-y-6">
         <div className="h-8 w-48 bg-muted rounded" />

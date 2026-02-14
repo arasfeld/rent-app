@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Building2, CircleAlert } from 'lucide-react';
 
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/lib/hooks';
 import { Alert, AlertDescription } from '@repo/ui/components/alert';
 import { Button } from '@repo/ui/components/button';
 import {

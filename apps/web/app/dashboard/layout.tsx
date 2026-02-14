@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/lib/hooks';
 import { AppSidebar } from '@/components/app-sidebar';
 import { DashboardBreadcrumb } from '@/components/dashboard-breadcrumb';
 import { Building2 } from 'lucide-react';

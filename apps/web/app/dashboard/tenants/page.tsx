@@ -1,12 +1,16 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Building2, Mail, Pencil, Phone, Plus, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@repo/shared/utils';
 
-import { useAuth } from '@/lib/auth-context';
-import { tenantsApi } from '@/lib/api';
+import {
+  useGetTenantsQuery,
+  useCreateTenantMutation,
+  useUpdateTenantMutation,
+  useDeleteTenantMutation,
+} from '@/lib/api';
 import { DataTable } from '@repo/ui/components/data-table';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
@@ -47,9 +51,12 @@ interface Tenant {
 }
 
 export default function TenantsPage() {
-  const { token } = useAuth();
-  const [tenants, setTenants] = useState<Tenant[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading } = useGetTenantsQuery();
+  const [createTenant] = useCreateTenantMutation();
+  const [updateTenant] = useUpdateTenantMutation();
+  const [deleteTenant] = useDeleteTenantMutation();
+
+  const tenants = (data?.data ?? []) as Tenant[];
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,22 +65,6 @@ export default function TenantsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchTenants = useCallback(async () => {
-    if (!token) return;
-    try {
-      const response = await tenantsApi.getAll(token);
-      setTenants(response.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    fetchTenants();
-  }, [fetchTenants]);
 
   const handleCreate = () => {
     setEditingTenant(null);
@@ -92,19 +83,20 @@ export default function TenantsPage() {
   };
 
   const handleSubmit = async (data: TenantFormData) => {
-    if (!token) return;
     setIsSubmitting(true);
     setError(null);
     try {
       const cleanedData = cleanTenantData(data);
       if (editingTenant) {
-        await tenantsApi.update(token, editingTenant.id, cleanedData);
+        await updateTenant({
+          id: editingTenant.id,
+          data: cleanedData as any,
+        }).unwrap();
       } else {
-        await tenantsApi.create(token, cleanedData);
+        await createTenant(cleanedData as any).unwrap();
       }
       setIsModalOpen(false);
       setEditingTenant(null);
-      fetchTenants();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -113,12 +105,11 @@ export default function TenantsPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!token || !deletingTenant) return;
+    if (!deletingTenant) return;
     setIsDeleting(true);
     try {
-      await tenantsApi.delete(token, deletingTenant.id);
+      await deleteTenant(deletingTenant.id).unwrap();
       setDeletingTenant(null);
-      fetchTenants();
     } catch (err) {
       console.error(err);
     } finally {

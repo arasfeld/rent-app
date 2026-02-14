@@ -1,12 +1,16 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Building2, MapPin, Pencil, Plus, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@repo/shared/utils';
 
-import { useAuth } from '@/lib/auth-context';
-import { propertiesApi } from '@/lib/api';
+import {
+  useGetPropertiesQuery,
+  useCreatePropertyMutation,
+  useUpdatePropertyMutation,
+  useDeletePropertyMutation,
+} from '@/lib/api';
 import { DataTable } from '@repo/ui/components/data-table';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
@@ -51,9 +55,12 @@ interface Property {
 }
 
 export default function PropertiesPage() {
-  const { token } = useAuth();
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading } = useGetPropertiesQuery();
+  const [createProperty] = useCreatePropertyMutation();
+  const [updateProperty] = useUpdatePropertyMutation();
+  const [deleteProperty] = useDeletePropertyMutation();
+
+  const properties = (data?.data ?? []) as Property[];
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,22 +71,6 @@ export default function PropertiesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchProperties = useCallback(async () => {
-    if (!token) return;
-    try {
-      const response = await propertiesApi.getAll(token);
-      setProperties(response.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    fetchProperties();
-  }, [fetchProperties]);
 
   const handleCreate = () => {
     setEditingProperty(null);
@@ -98,19 +89,20 @@ export default function PropertiesPage() {
   };
 
   const handleSubmit = async (data: PropertyFormData) => {
-    if (!token) return;
     setIsSubmitting(true);
     setError(null);
     try {
       const cleanedData = cleanPropertyData(data);
       if (editingProperty) {
-        await propertiesApi.update(token, editingProperty.id, cleanedData);
+        await updateProperty({
+          id: editingProperty.id,
+          data: cleanedData as any,
+        }).unwrap();
       } else {
-        await propertiesApi.create(token, cleanedData);
+        await createProperty(cleanedData as any).unwrap();
       }
       setIsModalOpen(false);
       setEditingProperty(null);
-      fetchProperties();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -119,12 +111,11 @@ export default function PropertiesPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!token || !deletingProperty) return;
+    if (!deletingProperty) return;
     setIsDeleting(true);
     try {
-      await propertiesApi.delete(token, deletingProperty.id);
+      await deleteProperty(deletingProperty.id).unwrap();
       setDeletingProperty(null);
-      fetchProperties();
     } catch (err) {
       console.error(err);
     } finally {

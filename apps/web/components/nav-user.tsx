@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ChevronsUpDown, LogOut, Moon, Settings, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/lib/hooks';
 
 import { Avatar, AvatarFallback } from '@repo/ui/components/avatar';
 import {

@@ -1,205 +1,298 @@
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type {
+  AuthResponse,
+  CreatePropertyDto,
+  CreateTenantDto,
+  CreateLeaseDto,
+  CreatePaymentDto,
+  DashboardStats,
+  LoginDto,
+  CreateUserDto,
+  PaginatedResponse,
+  Payment,
+  PaymentSummary,
+  Property,
+  Tenant,
+  UpdatePropertyDto,
+  UpdateTenantDto,
+  UpdateLeaseDto,
+  UpdatePaymentDto,
+  User,
+} from '@repo/shared/types';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
-interface RequestOptions extends RequestInit {
-  token?: string;
-}
-
-async function request<T>(
-  endpoint: string,
-  options: RequestOptions = {}
-): Promise<T> {
-  const { token, ...fetchOptions } = options;
-
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(fetchOptions.headers as Record<string, string>),
-  };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...fetchOptions,
-    headers,
-  });
-
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: 'An error occurred' }));
-    throw new Error(error.message || 'An error occurred');
-  }
-
-  return response.json();
-}
-
-// Auth API
-export const authApi = {
-  login: (data: { email: string; password: string }) =>
-    request<{ user: any; accessToken: string }>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(data),
+export const api = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const state = getState() as { auth: { token: string | null } };
+      const token = state.auth.token;
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ['Property', 'Tenant', 'Lease', 'Payment', 'Dashboard'],
+  endpoints: (builder) => ({
+    // Auth
+    login: builder.mutation<AuthResponse, LoginDto>({
+      query: (body) => ({ url: '/auth/login', method: 'POST', body }),
+    }),
+    register: builder.mutation<AuthResponse, Omit<CreateUserDto, 'phone'>>({
+      query: (body) => ({ url: '/auth/register', method: 'POST', body }),
+    }),
+    getProfile: builder.query<User, void>({
+      query: () => '/auth/me',
     }),
 
-  register: (data: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }) =>
-    request<{ user: any; accessToken: string }>('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(data),
+    // Properties
+    getProperties: builder.query<
+      PaginatedResponse<Property>,
+      Record<string, string> | void
+    >({
+      query: (params) => {
+        const query = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : '';
+        return `/properties${query}`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ id }) => ({
+                type: 'Property' as const,
+                id,
+              })),
+              { type: 'Property', id: 'LIST' },
+            ]
+          : [{ type: 'Property', id: 'LIST' }],
+    }),
+    getProperty: builder.query<Property, string>({
+      query: (id) => `/properties/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Property', id }],
+    }),
+    createProperty: builder.mutation<Property, CreatePropertyDto>({
+      query: (body) => ({ url: '/properties', method: 'POST', body }),
+      invalidatesTags: [
+        { type: 'Property', id: 'LIST' },
+        { type: 'Dashboard' },
+      ],
+    }),
+    updateProperty: builder.mutation<
+      Property,
+      { id: string; data: UpdatePropertyDto }
+    >({
+      query: ({ id, data }) => ({
+        url: `/properties/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Property', id },
+        { type: 'Property', id: 'LIST' },
+        { type: 'Dashboard' },
+      ],
+    }),
+    deleteProperty: builder.mutation<void, string>({
+      query: (id) => ({ url: `/properties/${id}`, method: 'DELETE' }),
+      invalidatesTags: [
+        { type: 'Property', id: 'LIST' },
+        { type: 'Dashboard' },
+      ],
     }),
 
-  getProfile: (token: string) => request<any>('/auth/me', { token }),
-};
-
-// Properties API
-export const propertiesApi = {
-  getAll: (token: string, params?: Record<string, any>) => {
-    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
-    return request<{ data: any[]; meta: any }>(`/properties${query}`, {
-      token,
-    });
-  },
-
-  getOne: (token: string, id: string) =>
-    request<any>(`/properties/${id}`, { token }),
-
-  create: (token: string, data: any) =>
-    request<any>('/properties', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      token,
+    // Tenants
+    getTenants: builder.query<
+      PaginatedResponse<Tenant>,
+      Record<string, string> | void
+    >({
+      query: (params) => {
+        const query = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : '';
+        return `/tenants${query}`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ id }) => ({
+                type: 'Tenant' as const,
+                id,
+              })),
+              { type: 'Tenant', id: 'LIST' },
+            ]
+          : [{ type: 'Tenant', id: 'LIST' }],
+    }),
+    createTenant: builder.mutation<Tenant, CreateTenantDto>({
+      query: (body) => ({ url: '/tenants', method: 'POST', body }),
+      invalidatesTags: [{ type: 'Tenant', id: 'LIST' }, { type: 'Dashboard' }],
+    }),
+    updateTenant: builder.mutation<
+      Tenant,
+      { id: string; data: UpdateTenantDto }
+    >({
+      query: ({ id, data }) => ({
+        url: `/tenants/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Tenant', id },
+        { type: 'Tenant', id: 'LIST' },
+        { type: 'Dashboard' },
+      ],
+    }),
+    deleteTenant: builder.mutation<void, string>({
+      query: (id) => ({ url: `/tenants/${id}`, method: 'DELETE' }),
+      invalidatesTags: [{ type: 'Tenant', id: 'LIST' }, { type: 'Dashboard' }],
     }),
 
-  update: (token: string, id: string, data: any) =>
-    request<any>(`/properties/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-      token,
+    // Leases
+    getLeases: builder.query<
+      PaginatedResponse<any>,
+      Record<string, string> | void
+    >({
+      query: (params) => {
+        const query = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : '';
+        return `/leases${query}`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ id }: { id: string }) => ({
+                type: 'Lease' as const,
+                id,
+              })),
+              { type: 'Lease', id: 'LIST' },
+            ]
+          : [{ type: 'Lease', id: 'LIST' }],
+    }),
+    createLease: builder.mutation<any, CreateLeaseDto>({
+      query: (body) => ({ url: '/leases', method: 'POST', body }),
+      invalidatesTags: [
+        { type: 'Lease', id: 'LIST' },
+        { type: 'Property', id: 'LIST' },
+        { type: 'Tenant', id: 'LIST' },
+        { type: 'Dashboard' },
+      ],
+    }),
+    updateLease: builder.mutation<any, { id: string; data: UpdateLeaseDto }>({
+      query: ({ id, data }) => ({
+        url: `/leases/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Lease', id },
+        { type: 'Lease', id: 'LIST' },
+        { type: 'Dashboard' },
+      ],
+    }),
+    deleteLease: builder.mutation<void, string>({
+      query: (id) => ({ url: `/leases/${id}`, method: 'DELETE' }),
+      invalidatesTags: [
+        { type: 'Lease', id: 'LIST' },
+        { type: 'Property', id: 'LIST' },
+        { type: 'Tenant', id: 'LIST' },
+        { type: 'Dashboard' },
+      ],
     }),
 
-  delete: (token: string, id: string) =>
-    request<any>(`/properties/${id}`, {
-      method: 'DELETE',
-      token,
+    // Payments
+    getPayments: builder.query<
+      PaginatedResponse<Payment>,
+      Record<string, string> | void
+    >({
+      query: (params) => {
+        const query = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : '';
+        return `/payments${query}`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ id }) => ({
+                type: 'Payment' as const,
+                id,
+              })),
+              { type: 'Payment', id: 'LIST' },
+            ]
+          : [{ type: 'Payment', id: 'LIST' }],
     }),
-};
-
-// Tenants API
-export const tenantsApi = {
-  getAll: (token: string, params?: Record<string, any>) => {
-    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
-    return request<{ data: any[]; meta: any }>(`/tenants${query}`, { token });
-  },
-
-  getOne: (token: string, id: string) =>
-    request<any>(`/tenants/${id}`, { token }),
-
-  create: (token: string, data: any) =>
-    request<any>('/tenants', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      token,
+    createPayment: builder.mutation<Payment, CreatePaymentDto>({
+      query: (body) => ({ url: '/payments', method: 'POST', body }),
+      invalidatesTags: [{ type: 'Payment', id: 'LIST' }, { type: 'Dashboard' }],
     }),
-
-  update: (token: string, id: string, data: any) =>
-    request<any>(`/tenants/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-      token,
+    updatePayment: builder.mutation<
+      Payment,
+      { id: string; data: UpdatePaymentDto }
+    >({
+      query: ({ id, data }) => ({
+        url: `/payments/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Payment', id },
+        { type: 'Payment', id: 'LIST' },
+        { type: 'Dashboard' },
+      ],
     }),
-
-  delete: (token: string, id: string) =>
-    request<any>(`/tenants/${id}`, {
-      method: 'DELETE',
-      token,
+    deletePayment: builder.mutation<void, string>({
+      query: (id) => ({ url: `/payments/${id}`, method: 'DELETE' }),
+      invalidatesTags: [{ type: 'Payment', id: 'LIST' }, { type: 'Dashboard' }],
     }),
-};
-
-// Leases API
-export const leasesApi = {
-  getAll: (token: string, params?: Record<string, any>) => {
-    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
-    return request<{ data: any[]; meta: any }>(`/leases${query}`, { token });
-  },
-
-  getOne: (token: string, id: string) =>
-    request<any>(`/leases/${id}`, { token }),
-
-  create: (token: string, data: any) =>
-    request<any>('/leases', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      token,
+    getPaymentSummary: builder.query<PaymentSummary, void>({
+      query: () => '/payments/summary',
+      providesTags: [{ type: 'Payment', id: 'SUMMARY' }],
     }),
 
-  update: (token: string, id: string, data: any) =>
-    request<any>(`/leases/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-      token,
+    // Dashboard
+    getDashboardStats: builder.query<DashboardStats, void>({
+      query: () => '/dashboard/stats',
+      providesTags: [{ type: 'Dashboard' }],
     }),
-
-  delete: (token: string, id: string) =>
-    request<any>(`/leases/${id}`, {
-      method: 'DELETE',
-      token,
+    getRecentActivity: builder.query<any, number | void>({
+      query: (limit) => {
+        const query = limit ? `?limit=${limit}` : '';
+        return `/dashboard/recent-activity${query}`;
+      },
+      providesTags: [{ type: 'Dashboard' }],
     }),
-};
-
-// Payments API
-export const paymentsApi = {
-  getAll: (token: string, params?: Record<string, any>) => {
-    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
-    return request<{ data: any[]; meta: any }>(`/payments${query}`, { token });
-  },
-
-  getOne: (token: string, id: string) =>
-    request<any>(`/payments/${id}`, { token }),
-
-  create: (token: string, data: any) =>
-    request<any>('/payments', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      token,
+    getFinancialSummary: builder.query<any, void>({
+      query: () => '/dashboard/financial-summary',
+      providesTags: [{ type: 'Dashboard' }],
     }),
+  }),
+});
 
-  update: (token: string, id: string, data: any) =>
-    request<any>(`/payments/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-      token,
-    }),
-
-  delete: (token: string, id: string) =>
-    request<any>(`/payments/${id}`, {
-      method: 'DELETE',
-      token,
-    }),
-
-  recordPayment: (token: string, data: any) =>
-    request<any>('/payments/record', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      token,
-    }),
-
-  getSummary: (token: string) => request<any>('/payments/summary', { token }),
-};
-
-// Dashboard API
-export const dashboardApi = {
-  getStats: (token: string) => request<any>('/dashboard/stats', { token }),
-
-  getRecentActivity: (token: string, limit?: number) => {
-    const query = limit ? `?limit=${limit}` : '';
-    return request<any>(`/dashboard/recent-activity${query}`, { token });
-  },
-
-  getFinancialSummary: (token: string) =>
-    request<any>('/dashboard/financial-summary', { token }),
-};
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useGetProfileQuery,
+  useGetPropertiesQuery,
+  useGetPropertyQuery,
+  useCreatePropertyMutation,
+  useUpdatePropertyMutation,
+  useDeletePropertyMutation,
+  useGetTenantsQuery,
+  useCreateTenantMutation,
+  useUpdateTenantMutation,
+  useDeleteTenantMutation,
+  useGetLeasesQuery,
+  useCreateLeaseMutation,
+  useUpdateLeaseMutation,
+  useDeleteLeaseMutation,
+  useGetPaymentsQuery,
+  useCreatePaymentMutation,
+  useUpdatePaymentMutation,
+  useDeletePaymentMutation,
+  useGetPaymentSummaryQuery,
+  useGetDashboardStatsQuery,
+  useGetRecentActivityQuery,
+  useGetFinancialSummaryQuery,
+} = api;

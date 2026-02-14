@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import {
   Building2,
   Users,
@@ -18,47 +17,22 @@ import {
 } from '@repo/ui/components/card';
 import { formatCurrency } from '@repo/shared/utils';
 
-import { dashboardApi } from '@/lib/api';
-import { useAuth } from '@/lib/auth-context';
+import {
+  useGetDashboardStatsQuery,
+  useGetRecentActivityQuery,
+} from '@/lib/api';
+import { useAuth } from '@/lib/hooks';
 import { getStatusVariant } from '@/lib/get-status-variant';
 import { StatCard } from '@/components/stat-card';
 
-interface DashboardStats {
-  totalProperties: number;
-  totalTenants: number;
-  activeLeases: number;
-  monthlyRevenue: number;
-  occupancyRate: number;
-  overduePayments: number;
-  upcomingLeaseExpirations: number;
-}
-
-interface RecentActivity {
-  recentPayments: any[];
-  recentLeases: any[];
-  upcomingReminders: any[];
-}
-
 export default function DashboardPage() {
-  const { token, user } = useAuth();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [activity, setActivity] = useState<RecentActivity | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
+  const { data: stats, isLoading: statsLoading } =
+    useGetDashboardStatsQuery();
+  const { data: activity, isLoading: activityLoading } =
+    useGetRecentActivityQuery(5);
 
-  useEffect(() => {
-    if (token) {
-      Promise.all([
-        dashboardApi.getStats(token),
-        dashboardApi.getRecentActivity(token, 5),
-      ])
-        .then(([statsData, activityData]) => {
-          setStats(statsData);
-          setActivity(activityData);
-        })
-        .catch(console.error)
-        .finally(() => setIsLoading(false));
-    }
-  }, [token]);
+  const isLoading = statsLoading || activityLoading;
 
   if (isLoading) {
     return (
