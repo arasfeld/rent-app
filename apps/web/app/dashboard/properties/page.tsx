@@ -11,9 +11,7 @@ import {
   useUpdatePropertyMutation,
   useDeletePropertyMutation,
 } from '@/lib/api';
-import { DataTable } from '@repo/ui/components/data-table';
-import { Badge } from '@repo/ui/components/badge';
-import { Button } from '@repo/ui/components/button';
+import { Badge, Button, DataTable } from '@repo/ui';
 import { PropertyModal } from '@/components/modals/property-modal';
 import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';

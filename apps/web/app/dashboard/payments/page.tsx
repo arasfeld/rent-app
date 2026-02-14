@@ -21,9 +21,7 @@ import {
   useUpdatePaymentMutation,
   useDeletePaymentMutation,
 } from '@/lib/api';
-import { DataTable } from '@repo/ui/components/data-table';
-import { Badge } from '@repo/ui/components/badge';
-import { Button } from '@repo/ui/components/button';
+import { Badge, Button, DataTable } from '@repo/ui';
 import { StatCard } from '@/components/stat-card';
 import { PaymentModal } from '@/components/modals/payment-modal';
 import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';

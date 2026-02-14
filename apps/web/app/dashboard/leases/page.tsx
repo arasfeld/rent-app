@@ -13,9 +13,7 @@ import {
   useUpdateLeaseMutation,
   useDeleteLeaseMutation,
 } from '@/lib/api';
-import { Badge } from '@repo/ui/components/badge';
-import { Button } from '@repo/ui/components/button';
-import { DataTable } from '@repo/ui/components/data-table';
+import { Badge, Button, DataTable } from '@repo/ui';
 import { LeaseModal } from '@/components/modals/lease-modal';
 import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';

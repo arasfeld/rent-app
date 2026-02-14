@@ -6,8 +6,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@repo/ui/components/dialog';
-import { ScrollArea } from '@repo/ui/components/scroll-area';
+  ScrollArea,
+} from '@repo/ui';
 import { LeaseForm } from '@/components/forms/lease-form';
 import { LeaseFormData } from '@/lib/validations/lease';
 

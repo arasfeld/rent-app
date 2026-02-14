@@ -1,6 +1,5 @@
 import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
-import { cn } from '@repo/ui/lib/utils';
-import { Card, CardContent } from '@repo/ui/components/card';
+import { Card, CardContent, cn } from '@repo/ui';
 
 interface StatCardProps {
   title: string;

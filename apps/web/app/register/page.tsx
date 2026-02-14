@@ -6,15 +6,16 @@ import Link from 'next/link';
 import { Building2, CircleAlert } from 'lucide-react';
 
 import { useAuth } from '@/lib/hooks';
-import { Alert, AlertDescription } from '@repo/ui/components/alert';
-import { Button } from '@repo/ui/components/button';
 import {
+  Alert,
+  AlertDescription,
+  Button,
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from '@repo/ui/components/field';
-import { Input } from '@repo/ui/components/input';
+  Input,
+} from '@repo/ui';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({

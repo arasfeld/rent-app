@@ -7,11 +7,11 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { DashboardBreadcrumb } from '@/components/dashboard-breadcrumb';
 import { Building2 } from 'lucide-react';
 import {
+  Separator,
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@repo/ui/components/sidebar';
-import { Separator } from '@repo/ui/components/separator';
+} from '@repo/ui';
 
 export default function DashboardLayout({
   children,

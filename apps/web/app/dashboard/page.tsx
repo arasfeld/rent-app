@@ -8,13 +8,7 @@ import {
   Calendar,
   TrendingUp,
 } from 'lucide-react';
-import { Badge } from '@repo/ui/components/badge';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@repo/ui/components/card';
+import { Badge, Card, CardHeader, CardTitle, CardContent } from '@repo/ui';
 import { formatCurrency } from '@repo/shared/utils';
 
 import {
@@ -27,8 +21,7 @@ import { StatCard } from '@/components/stat-card';
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { data: stats, isLoading: statsLoading } =
-    useGetDashboardStatsQuery();
+  const { data: stats, isLoading: statsLoading } = useGetDashboardStatsQuery();
   const { data: activity, isLoading: activityLoading } =
     useGetRecentActivityQuery(5);
 

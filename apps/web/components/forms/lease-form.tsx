@@ -4,19 +4,20 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Loader2 } from 'lucide-react';
 
-import { Alert, AlertDescription } from '@repo/ui/components/alert';
-import { Button } from '@repo/ui/components/button';
-import { Input } from '@repo/ui/components/input';
-import { Label } from '@repo/ui/components/label';
 import {
+  Alert,
+  AlertDescription,
+  Button,
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/ui/components/select';
-import { Separator } from '@repo/ui/components/separator';
-import { Textarea } from '@repo/ui/components/textarea';
+  Separator,
+  Textarea,
+} from '@repo/ui';
 import {
   leaseSchema,
   LeaseFormData,

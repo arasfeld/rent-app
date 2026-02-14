@@ -11,7 +11,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@repo/ui/components/breadcrumb';
+} from '@repo/ui';
 
 const segmentLabels: Record<string, string> = {
   dashboard: 'Dashboard',

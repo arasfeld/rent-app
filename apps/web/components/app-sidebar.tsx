@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from '@repo/ui/components/sidebar';
+} from '@repo/ui';
 import { useAuth } from '@/lib/hooks';
 import { NavUser } from './nav-user';
 

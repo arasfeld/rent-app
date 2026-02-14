@@ -6,8 +6,9 @@ import { useTheme } from 'next-themes';
 
 import { useAuth } from '@/lib/hooks';
 
-import { Avatar, AvatarFallback } from '@repo/ui/components/avatar';
 import {
+  Avatar,
+  AvatarFallback,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -15,13 +16,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@repo/ui/components/dropdown-menu';
-import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@repo/ui/components/sidebar';
+} from '@repo/ui';
 
 interface NavUserProps {
   user: {

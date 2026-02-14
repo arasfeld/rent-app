@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
-} from '@repo/ui/components/alert-dialog';
+} from '@repo/ui';
 import { Loader2, AlertTriangle } from 'lucide-react';
 
 interface DeleteConfirmModalProps {
