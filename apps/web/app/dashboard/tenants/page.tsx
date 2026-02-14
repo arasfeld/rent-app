@@ -1,19 +1,19 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
-import { Building2, Mail, Pencil, Phone, Plus, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@repo/shared';
+import { Badge, Button, DataTable } from '@repo/ui';
+import { ColumnDef } from '@tanstack/react-table';
+import { Building2, Mail, Pencil, Phone, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
+import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
+import { TenantModal } from '@/components/modals/tenant-modal';
 import {
   useGetTenantsQuery,
   useCreateTenantMutation,
   useUpdateTenantMutation,
   useDeleteTenantMutation,
 } from '@/lib/api';
-import { Badge, Button, DataTable } from '@repo/ui';
-import { TenantModal } from '@/components/modals/tenant-modal';
-import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';
 import { cleanTenantData, type TenantFormData } from '@/lib/validations/tenant';
 

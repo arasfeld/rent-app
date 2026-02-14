@@ -1,6 +1,5 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Alert,
@@ -11,8 +10,10 @@ import {
   Separator,
   Textarea,
 } from '@repo/ui';
-import { tenantSchema, TenantFormData } from '@/lib/validations/tenant';
 import { AlertCircle, Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+
+import { tenantSchema, TenantFormData } from '@/lib/validations/tenant';
 
 interface TenantFormProps {
   initialData?: Partial<TenantFormData>;

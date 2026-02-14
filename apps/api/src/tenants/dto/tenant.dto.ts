@@ -1,3 +1,4 @@
+import { Type, Transform } from 'class-transformer';
 import {
   IsString,
   IsEmail,
@@ -10,7 +11,6 @@ import {
   Min,
   Max,
 } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
 
 export class EmergencyContactDto {
   @IsString()

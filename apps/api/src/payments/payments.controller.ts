@@ -9,15 +9,17 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
+
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
 import {
   CreatePaymentDto,
   UpdatePaymentDto,
   PaymentQueryDto,
   RecordPaymentDto,
 } from './dto/payment.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { PaymentsService } from './payments.service';
 
 @Controller('payments')
 @UseGuards(JwtAuthGuard)

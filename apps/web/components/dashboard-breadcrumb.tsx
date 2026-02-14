@@ -1,9 +1,5 @@
 'use client';
 
-import * as React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,6 +8,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@repo/ui';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import * as React from 'react';
 
 const segmentLabels: Record<string, string> = {
   dashboard: 'Dashboard',

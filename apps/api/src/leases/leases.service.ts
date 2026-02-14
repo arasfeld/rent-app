@@ -3,7 +3,9 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+
 import { PrismaService } from '../prisma/prisma.service';
+
 import { CreateLeaseDto, UpdateLeaseDto, LeaseQueryDto } from './dto/lease.dto';
 
 @Injectable()

@@ -3,7 +3,9 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+
 import { PrismaService } from '../prisma/prisma.service';
+
 import {
   CreatePaymentDto,
   UpdatePaymentDto,
@@ -70,7 +72,7 @@ export class PaymentsService {
     const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    let payment = await this.prisma.payment.findFirst({
+    const payment = await this.prisma.payment.findFirst({
       where: {
         leaseId: dto.leaseId,
         status: 'PENDING',

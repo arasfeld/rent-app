@@ -1,6 +1,5 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Alert,
@@ -16,13 +15,15 @@ import {
   SelectValue,
   Textarea,
 } from '@repo/ui';
+import { AlertCircle, Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+
 import {
   paymentSchema,
   PaymentFormData,
   PAYMENT_TYPE_OPTIONS,
   PAYMENT_METHOD_OPTIONS,
 } from '@/lib/validations/payment';
-import { AlertCircle, Loader2 } from 'lucide-react';
 
 interface Lease {
   id: string;

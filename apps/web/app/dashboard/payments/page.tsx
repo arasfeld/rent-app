@@ -1,7 +1,8 @@
 'use client';
 
+import { formatCurrency, formatDate } from '@repo/shared';
+import { Badge, Button, DataTable } from '@repo/ui';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle,
@@ -11,8 +12,11 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react';
-import { formatCurrency, formatDate } from '@repo/shared';
+import { useState } from 'react';
 
+import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
+import { PaymentModal } from '@/components/modals/payment-modal';
+import { StatCard } from '@/components/stat-card';
 import {
   useGetPaymentsQuery,
   useGetPaymentSummaryQuery,
@@ -21,10 +25,6 @@ import {
   useUpdatePaymentMutation,
   useDeletePaymentMutation,
 } from '@/lib/api';
-import { Badge, Button, DataTable } from '@repo/ui';
-import { StatCard } from '@/components/stat-card';
-import { PaymentModal } from '@/components/modals/payment-modal';
-import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';
 import {
   cleanPaymentData,

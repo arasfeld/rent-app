@@ -1,7 +1,7 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { US_STATES } from '@repo/shared';
 import {
   Alert,
   AlertDescription,
@@ -16,13 +16,14 @@ import {
   Separator,
   Textarea,
 } from '@repo/ui';
+import { AlertCircle, Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+
 import {
   propertySchema,
   PropertyFormData,
   PROPERTY_TYPE_OPTIONS,
 } from '@/lib/validations/property';
-import { US_STATES } from '@repo/shared';
-import { AlertCircle, Loader2 } from 'lucide-react';
 
 interface PropertyFormProps {
   initialData?: Partial<PropertyFormData>;

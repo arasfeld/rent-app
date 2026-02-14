@@ -1,12 +1,13 @@
 'use client';
 
+import { TooltipProvider } from '@repo/ui';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ReactNode, useRef } from 'react';
 import { Provider } from 'react-redux';
-import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import { TooltipProvider } from '@repo/ui';
-import { makeStore, type AppStore } from '@/lib/store';
+
 import { api } from '@/lib/api';
 import { setLoading, setToken } from '@/lib/auth-slice';
+import { makeStore, type AppStore } from '@/lib/store';
 
 export function Providers({ children }: { children: ReactNode }) {
   const storeRef = useRef<AppStore | null>(null);

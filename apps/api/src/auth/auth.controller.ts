@@ -1,8 +1,9 @@
 import { Controller, Post, Get, Body, UseGuards, Patch } from '@nestjs/common';
+
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { RegisterDto, LoginDto, UpdateProfileDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {

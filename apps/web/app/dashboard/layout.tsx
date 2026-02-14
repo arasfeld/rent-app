@@ -1,17 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/hooks';
-import { AppSidebar } from '@/components/app-sidebar';
-import { DashboardBreadcrumb } from '@/components/dashboard-breadcrumb';
-import { Building2 } from 'lucide-react';
 import {
   Separator,
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@repo/ui';
+import { Building2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { AppSidebar } from '@/components/app-sidebar';
+import { DashboardBreadcrumb } from '@/components/dashboard-breadcrumb';
+import { useAuth } from '@/lib/hooks';
+
 
 export default function DashboardLayout({
   children,

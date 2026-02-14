@@ -9,10 +9,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { LeasesService } from './leases.service';
-import { CreateLeaseDto, UpdateLeaseDto, LeaseQueryDto } from './dto/lease.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
+import { CreateLeaseDto, UpdateLeaseDto, LeaseQueryDto } from './dto/lease.dto';
+import { LeasesService } from './leases.service';
 
 @Controller('leases')
 @UseGuards(JwtAuthGuard)

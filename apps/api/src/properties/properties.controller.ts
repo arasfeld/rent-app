@@ -9,14 +9,16 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PropertiesService } from './properties.service';
+
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
 import {
   CreatePropertyDto,
   UpdatePropertyDto,
   PropertyQueryDto,
 } from './dto/property.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { PropertiesService } from './properties.service';
 
 @Controller('properties')
 @UseGuards(JwtAuthGuard)

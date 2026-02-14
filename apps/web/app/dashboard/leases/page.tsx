@@ -1,10 +1,13 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
-import { Calendar, FileText, Pencil, Plus, Trash2 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@repo/shared';
+import { Badge, Button, DataTable } from '@repo/ui';
+import { ColumnDef } from '@tanstack/react-table';
+import { Calendar, FileText, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
+import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
+import { LeaseModal } from '@/components/modals/lease-modal';
 import {
   useGetLeasesQuery,
   useGetPropertiesQuery,
@@ -13,9 +16,6 @@ import {
   useUpdateLeaseMutation,
   useDeleteLeaseMutation,
 } from '@/lib/api';
-import { Badge, Button, DataTable } from '@repo/ui';
-import { LeaseModal } from '@/components/modals/lease-modal';
-import { DeleteConfirmModal } from '@/components/modals/delete-confirm-modal';
 import { getStatusVariant } from '@/lib/get-status-variant';
 import { cleanLeaseData, type LeaseFormData } from '@/lib/validations/lease';
 

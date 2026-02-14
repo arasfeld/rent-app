@@ -1,5 +1,7 @@
 'use client';
 
+import { formatCurrency } from '@repo/shared';
+import { Badge, Card, CardHeader, CardTitle, CardContent } from '@repo/ui';
 import {
   Building2,
   Users,
@@ -8,16 +10,14 @@ import {
   Calendar,
   TrendingUp,
 } from 'lucide-react';
-import { Badge, Card, CardHeader, CardTitle, CardContent } from '@repo/ui';
-import { formatCurrency } from '@repo/shared';
 
+import { StatCard } from '@/components/stat-card';
 import {
   useGetDashboardStatsQuery,
   useGetRecentActivityQuery,
 } from '@/lib/api';
-import { useAuth } from '@/lib/hooks';
 import { getStatusVariant } from '@/lib/get-status-variant';
-import { StatCard } from '@/components/stat-card';
+import { useAuth } from '@/lib/hooks';
 
 export default function DashboardPage() {
   const { user } = useAuth();

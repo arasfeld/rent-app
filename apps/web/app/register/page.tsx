@@ -1,11 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Building2, CircleAlert } from 'lucide-react';
-
-import { useAuth } from '@/lib/hooks';
 import {
   Alert,
   AlertDescription,
@@ -16,6 +10,13 @@ import {
   FieldLabel,
   Input,
 } from '@repo/ui';
+import { Building2, CircleAlert } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { useAuth } from '@/lib/hooks';
+
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({

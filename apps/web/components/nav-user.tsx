@@ -1,11 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-import { ChevronsUpDown, LogOut, Moon, Settings, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-
-import { useAuth } from '@/lib/hooks';
-
 import {
   Avatar,
   AvatarFallback,
@@ -21,6 +15,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@repo/ui';
+import { ChevronsUpDown, LogOut, Moon, Settings, Sun } from 'lucide-react';
+import Link from 'next/link';
+import { useTheme } from 'next-themes';
+
+import { useAuth } from '@/lib/hooks';
+
 
 interface NavUserProps {
   user: {
