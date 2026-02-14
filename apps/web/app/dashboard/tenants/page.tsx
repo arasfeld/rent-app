@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Building2, Mail, Pencil, Phone, Plus, Trash2 } from 'lucide-react';
-import { formatCurrency } from '@repo/shared/utils';
+import { formatCurrency } from '@repo/shared';
 
 import {
   useGetTenantsQuery,

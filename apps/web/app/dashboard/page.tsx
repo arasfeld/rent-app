@@ -9,7 +9,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { Badge, Card, CardHeader, CardTitle, CardContent } from '@repo/ui';
-import { formatCurrency } from '@repo/shared/utils';
+import { formatCurrency } from '@repo/shared';
 
 import {
   useGetDashboardStatsQuery,

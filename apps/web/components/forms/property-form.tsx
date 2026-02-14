@@ -21,7 +21,7 @@ import {
   PropertyFormData,
   PROPERTY_TYPE_OPTIONS,
 } from '@/lib/validations/property';
-import { US_STATES } from '@repo/shared/constants';
+import { US_STATES } from '@repo/shared';
 import { AlertCircle, Loader2 } from 'lucide-react';
 
 interface PropertyFormProps {

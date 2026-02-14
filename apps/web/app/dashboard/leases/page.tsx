@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Calendar, FileText, Pencil, Plus, Trash2 } from 'lucide-react';
-import { formatCurrency, formatDate } from '@repo/shared/utils';
+import { formatCurrency, formatDate } from '@repo/shared';
 
 import {
   useGetLeasesQuery,
